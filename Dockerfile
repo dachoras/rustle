@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Stage 1: Build the Yew WASM frontend
-FROM rust:1.78 AS frontend_builder
+FROM rust:latest AS frontend_builder
 WORKDIR /app
 RUN rustup target add wasm32-unknown-unknown
 
@@ -19,7 +19,7 @@ RUN tailwindcss --help
 RUN trunk build --release
 
 # Stage 2: Build the Axum server backend
-FROM rust:1.78 AS backend_builder
+FROM rust:latest AS backend_builder
 WORKDIR /app
 COPY . .
 # Copy built static files from frontend stage into dist
