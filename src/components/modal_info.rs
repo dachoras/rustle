@@ -34,7 +34,7 @@ pub fn info_modal(props: &InfoModalProps) -> Html {
     html! {
         <BaseModal title="How to play" is_open={props.is_open} handle_close={props.handle_close.clone()}>
             <p class="text-sm text-gray-500 dark:text-gray-300">
-                {"Guess the word in 6 tries. After each guess, the color of the tiles will change to show how close your guess was to the word."}
+                {"Guess the 5-letter word in 6 tries. After each guess, the color of the tiles will change to show how close your guess was to the word."}
             </p>
 
             <div class="mb-1 mt-4 flex justify-center">

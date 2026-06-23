@@ -1,0 +1,34 @@
+# syntax = docker/dockerfile:1
+
+# Stage 1: Build the Yew WASM frontend
+FROM rust:1.78 AS frontend_builder
+WORKDIR /app
+RUN rustup target add wasm32-unknown-unknown
+RUN cargo install --locked trunk
+COPY . .
+RUN trunk build --release
+
+# Stage 2: Build the Axum server backend
+FROM rust:1.78 AS backend_builder
+WORKDIR /app
+COPY . .
+# Copy built static files from frontend stage into dist
+COPY --from=frontend_builder /app/dist /app/dist
+RUN cargo build --release --bin server
+
+# Stage 3: Slim Runner
+FROM debian:bookworm-slim AS runner
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+# Copy compiled server binary and compiled static assets
+COPY --from=backend_builder /app/target/release/server /app/server
+COPY --from=frontend_builder /app/dist /app/dist
+
+# Run as non-root user for security
+RUN groupadd -g 10001 appgroup && \
+    useradd -u 10001 -g appgroup -m -s /sbin/nologin appuser
+USER appuser
+
+EXPOSE 4409
+ENV PORT=4409
+CMD ["/app/server"]

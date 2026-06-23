@@ -39,6 +39,7 @@ fn test_guess_statuses_correct_and_present() {
     assert_eq!(statuses[4], CharStatus::Present);
 }
 
+
 #[test]
 fn test_guess_statuses_exact_match() {
     let statuses = get_guess_statuses("APPLE", "APPLE");
@@ -64,6 +65,13 @@ fn test_winning_word_case_insensitive() {
 }
 
 #[test]
+fn test_is_word_in_word_list() {
+    assert!(crate::helpers::words::is_word_in_word_list("APPLE"));
+    assert!(crate::helpers::words::is_word_in_word_list("apple"));
+    assert!(!crate::helpers::words::is_word_in_word_list("RAT"));
+}
+
+#[test]
 fn test_date_indices_and_solutions() {
     let base_date = NaiveDate::from_ymd_opt(2022, 1, 1).unwrap();
     let index = get_index(base_date);
@@ -84,6 +92,7 @@ fn test_hard_mode_guess_validation() {
     assert!(unused.is_some());
     assert!(unused.unwrap().contains('R'));
 }
+
 
 #[test]
 fn test_persistence_game_state_and_preferences() {

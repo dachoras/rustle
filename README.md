@@ -1,8 +1,23 @@
 # Rustle
 
-An optimized Rust + WebAssembly (Yew) Wordle clone.
+An optimized Rust + WebAssembly (Yew) Wordle clone with an Axum backend.
 
-## Run Game
+## Overview & Rules
+
+Rustle is a lightweight, responsive, and secure clone of the popular Wordle game built using Rust, Yew, and WebAssembly, served by a native Axum backend.
+
+### Game Rules:
+- Guess the **5-letter word** in 6 tries.
+- Each guess must be a valid 5-letter word.
+- After each guess, the color of the tiles will change to show how close your guess was to the word:
+  - **Green (Correct)**: The letter is in the word and in the correct spot.
+  - **Yellow (Present)**: The letter is in the word but in the wrong spot.
+  - **Gray (Absent)**: The letter is not in the word in any spot.
+- **Hard Mode**: Any revealed hints must be used in subsequent guesses.
+
+---
+
+## Native Server (Rust & Axum)
 
 ### 1. Prerequisites
 Ensure you have the Rust toolchain, WASM target, and Trunk compiler installed:
@@ -12,25 +27,61 @@ rustup target add wasm32-unknown-unknown
 
 # Install Trunk compiler
 cargo install --locked trunk
-
-# Install Standalone Tailwind CSS v3 CLI
-curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64
-chmod +x tailwindcss-linux-x64
-mv tailwindcss-linux-x64 ~/.cargo/bin/tailwindcss
 ```
 
-### 2. Compile and Serve
-Start the server locally on port `4409` (configured inside `Trunk.toml`):
+### 2. Build Frontend & Start Axum Server
+To compile the frontend and start the backend server natively on port `4409`:
 ```bash
-trunk serve
-```
-Open [http://localhost:4409](http://localhost:4409) to play.
-
-### 3. Production Build
-Generate optimized release artifacts in the `/dist` directory:
-```bash
+# 1. Compile the WASM frontend assets into the /dist directory
 trunk build --release
+
+# 2. Start the Axum server to serve the assets
+cargo run --release --bin server
 ```
+Open [http://localhost:4409](http://localhost:4409) in your browser to play.
+
+---
+
+## Docker Configuration
+
+### Run with Docker Compose
+
+To quickly run Rustle using Docker Compose, create a `docker-compose.yml` file with the following configuration:
+
+```yaml
+version: "3.8"
+
+services:
+  rustle:
+    image: ubermetroid/rustle:latest
+    container_name: rustle
+    restart: unless-stopped
+    ports:
+      - 4409:4409
+```
+
+Run the container:
+```bash
+docker compose up -d
+```
+
+### Build and Run with Dockerfile
+
+If you want to build and run the image locally:
+
+1. **Build the production image**:
+   ```bash
+   docker build -t ubermetroid/rustle:latest -f Dockerfile .
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker run -d -p 4409:4409 --name rustle ubermetroid/rustle:latest
+   ```
+
+Open [http://localhost:4409](http://localhost:4409) in your browser to play.
+
+---
 
 ## File Tree
 
@@ -40,14 +91,16 @@ rustle/
 ├── Trunk.toml                  # WebAssembly build tool configuration
 ├── index.html                  # HTML entry point injecting CSS/WASM target
 ├── tailwind.config.js          # TailwindCSS configuration rules
+├── index.css                   # Core styling overrides
+├── Dockerfile                  # Multi-stage WASM + Axum Docker build
 └── src/
     ├── main.rs                 # Bootstraps Yew client to DOM
     ├── app.rs                  # Layout view coordinator
     ├── app_state.rs            # Game state reducers machine
     ├── app_effects.rs          # Side effects custom hook
     ├── constants.rs            # Constants module index
-    ├── index.css               # Core styling overrides
-    ├── tailwind.css            # Compiled output of tailwind class definitions
+    ├── bin/
+    │   └── server.rs           # Native Axum backend server
     ├── constants/
     │   ├── config.rs           # Game settings & localization text
     │   └── word_db.rs          # O(log N) binary search database
