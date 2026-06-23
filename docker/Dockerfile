@@ -3,21 +3,20 @@
 # Stage 1: Build the Rust WASM application
 FROM rust:1.78-slim AS builder
 
-# Install system dependencies (including nodejs and npm for tailwindcss)
-RUN apt-get update && apt-get install -y pkg-config libssl-dev curl gnupg && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
+# Install system dependencies
+RUN apt-get update && apt-get install -y pkg-config libssl-dev curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Install trunk and wasm32 compilation target
 RUN cargo install --locked trunk && \
     rustup target add wasm32-unknown-unknown
 
-WORKDIR /app
+# Download standalone Tailwind CLI binary
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-linux-x64 && \
+    chmod +x tailwindcss-linux-x64 && \
+    mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
 
-# Install npm packages for tailwindcss execution
-COPY package.json package-lock.json ./
-RUN npm ci
+WORKDIR /app
 
 # Copy codebase and compile release artifacts
 COPY . .

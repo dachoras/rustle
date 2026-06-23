@@ -20,6 +20,6 @@ ignore = [".git", "target", "node_modules", "dist"]
 
 [[hooks]]
 stage = "pre_build"
-command = "npx"
-command_arguments = ["tailwindcss", "-i", "src/index.css", "-o", "src/tailwind.css", "--minify"]
+command = "tailwindcss"
+command_arguments = ["-i", "src/index.css", "-o", "src/tailwind.css", "--minify"]
 

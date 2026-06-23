@@ -1,34 +1,11 @@
 # Rustle
 
-An optimized Rust + WebAssembly (Yew) Wordle clone.
+An optimized, containerized Rust + WebAssembly (Yew) Wordle clone.
 
-## Local Development (Time-To-First-Run)
-
-### 1. Prerequisites
-Ensure you have the Rust toolchain and WASM compilation target installed:
-```bash
-# Add WebAssembly target
-rustup target add wasm32-unknown-unknown
-
-# Install Trunk compiler
-cargo install --locked trunk
-```
-
-### 2. Install Styles Dependencies
-```bash
-npm install
-```
-
-### 3. Run Development Server
-```bash
-trunk serve
-```
-Open [http://localhost:4409](http://localhost:4409) to play.
-
-## Docker Container Deployment
+## Container Deployment
 
 ### 1. Build Production Image
-Build the multi-stage, optimized WASM Docker image:
+Build the multi-stage, optimized WASM Docker image using the standalone Tailwind CSS compiler:
 ```bash
 docker build -t ubermetroid/rustle:latest -f docker/Dockerfile .
 ```
@@ -47,41 +24,40 @@ rustle/
 ├── Cargo.toml                  # Cargo dependencies & release optimization profile
 ├── Trunk.toml                  # WebAssembly build tool configuration
 ├── index.html                  # HTML entry point injecting CSS/WASM target
-├── tailwind.config.js          # TailwindCSS config
-├── package.json                # Tailwind and build configurations
+├── tailwind.config.js          # TailwindCSS configuration rules
 └── src/
-    ├── main.rs                 # Bootstraps the Yew WASM client to the DOM
-    ├── app.rs                  # Main view layout coordinator
-    ├── app_state.rs            # Centralized Reducer-based game state machine
-    ├── app_effects.rs          # Yew custom hook holding game side effects
-    ├── constants.rs            # Top-level constants module registration
-    ├── index.css               # Core styling overrides (glassmorphism/colors)
+    ├── main.rs                 # Bootstraps Yew client to DOM
+    ├── app.rs                  # Layout view coordinator
+    ├── app_state.rs            # Game state reducers machine
+    ├── app_effects.rs          # Side effects custom hook
+    ├── constants.rs            # Constants module index
+    ├── index.css               # Core styling overrides
     ├── tailwind.css            # Compiled output of tailwind class definitions
     ├── constants/
-    │   ├── config.rs           # Core settings, localized text messages, and game rules
-    │   └── word_db.rs          # Zero-allocation O(log N) binary search database
+    │   ├── config.rs           # Game settings & localization text
+    │   └── word_db.rs          # O(log N) binary search database
     ├── components/
-    │   ├── mod.rs              # Exports and mounts modular UI components
+    │   ├── mod.rs              # UI components index
     │   ├── alerts.rs           # Toast style event alerts
     │   ├── grid.rs             # Cell tiles container grid
     │   ├── keyboard.rs         # Virtual key inputs listener & styling
     │   ├── navbar.rs           # Navigation header controls
-    │   ├── stat_bar.rs         # Top status metrics indicator (Streaks/Tries)
-    │   ├── stat_histogram.rs   # Guess distributions chart horizontal bars
-    │   ├── app_modals.rs       # Base container coordinating overlay visibility & settings callbacks
-    │   ├── modal_base.rs       # Reusable backdrop and overlay layouts
-    │   ├── modal_info.rs       # Instructions & Rules modal
-    │   ├── modal_settings.rs   # Game difficulty, contrast, theme modal
-    │   ├── modal_stats.rs      # Win distributions, count-downs, and sharing trigger
-    │   ├── modal_date_picker.rs# Choose historical puzzles date picker
-    │   └── modal_migrate.rs    # Exporting/importing user profiles via encrypted code
+    │   ├── stat_bar.rs         # Streaks/Tries dashboard indicators
+    │   ├── stat_histogram.rs   # Guess distributions chart
+    │   ├── app_modals.rs       # Coordination backdrop wrapper
+    │   ├── modal_base.rs       # Reusable overlay layout
+    │   ├── modal_info.rs       # Instructions & rules modal
+    │   ├── modal_settings.rs   # Difficulty, contrast, dark-mode settings
+    │   ├── modal_stats.rs      # Win histograms, count-downs, share triggers
+    │   ├── modal_date_picker.rs# Historical date picker dialog
+    │   └── modal_migrate.rs    # User profile transfers encryption coder
     └── helpers/
-        ├── mod.rs              # Mounts core helpers
-        ├── browser.rs          # Social media user agent checkers
-        ├── encryption.rs       # Blowfish cryptology encoder/decoder
-        ├── local_storage.rs    # Persistence adapters mapping structures to local web storage
-        ├── share.rs            # Clipboard string formatting
-        ├── stats.rs            # Streaks accumulation math
-        ├── statuses.rs         # Correct / Present / Absent validation engine
-        └── words.rs            # Epoch calendars, dates, and solution lookups
+        ├── mod.rs              # Helper module index
+        ├── browser.rs          # Embedded browser client checking
+        ├── encryption.rs       # Blowfish cryptology coder
+        ├── local_storage.rs    # Browser local storage interface
+        ├── share.rs            # Social copy-to-clipboard formatters
+        ├── stats.rs            # Streak calculators
+        ├── statuses.rs         # Letter placement evaluation engine
+        └── words.rs            # Solution lookups & game calendars
 ```
