@@ -2,6 +2,12 @@
 name = "rustle"
 version = "0.1.0"
 edition = "2021"
+authors = ["UberMetroid <admin@ubermetroid.com>"]
+license = "GPL-3.0-only"
+repository = "https://github.com/UberMetroid/rustle"
+homepage = "https://github.com/UberMetroid/rustle"
+description = "An optimized, responsive, and secure clone of the popular Wordle game built using Rust, Yew, and WebAssembly, served by a native Axum backend."
+readme = "README.md"
 
 [dependencies]
 yew = { version = "0.21.0", features = ["csr"] }

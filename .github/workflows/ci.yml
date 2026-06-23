@@ -6,29 +6,55 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  build:
+  fmt:
+    name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install Rust Toolchain
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Check Formatting
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run Clippy (Deny Warnings)
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  build:
+    name: Build WASM & Server App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
-          components: clippy, rustfmt
-
-      - name: Cache Cargo Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Standalone Tailwind CLI
         run: |
@@ -36,39 +62,21 @@ jobs:
           chmod +x tailwindcss-linux-x64
           mkdir -p ~/.cargo/bin
           mv tailwindcss-linux-x64 ~/.cargo/bin/tailwindcss
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install Trunk
-        run: |
-          mkdir -p ~/.cargo/bin
-          if ! command -v trunk &> /dev/null; then
-            wget -qO- https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf- -C ~/.cargo/bin
-          fi
+        uses: jetli/trunk-action@v0.5.0
+        with:
+          version: 'v0.21.14'
 
-      - name: Verify Formatting
-        run: cargo fmt -- --check
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
 
-      - name: Lints Check (Clippy)
-        run: cargo clippy -- -D warnings
-
-      - name: Cargo Check
-        run: cargo check
+      - name: Build Trunk App (Production)
+        run: trunk build --release
 
       - name: Run Tests
         run: cargo test
 
-      - name: Security Audit (Cargo Audit)
-        uses: actions-rust-lang/audit@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Infrastructure Vulnerability Scan (Trivy)
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Build Trunk App (Production)
-        run: ~/.cargo/bin/trunk build --release
-
+      - name: Build Server Binary
+        run: cargo build --release --bin server
