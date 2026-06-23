@@ -26,6 +26,17 @@ mod native_server {
 
     #[tokio::main]
     pub async fn run() {
+        // Standardize site title fallback support
+        let site_title = std::env::var("RUSTLE_TITLE")
+            .or_else(|_| std::env::var("RUSTLE_SITE_TITLE"))
+            .or_else(|_| std::env::var("SITE_TITLE"))
+            .unwrap_or_else(|_| "Rustle".to_string());
+        
+        if let Ok(html) = std::fs::read_to_string("dist/index.html") {
+            let replaced = html.replace("<title>Rustle</title>", &format!("<title>{}</title>", site_title));
+            let _ = std::fs::write("dist/index.html", replaced);
+        }
+
         // Setup directory serving with fallbacks for index.html client routing
         let serve_dir = ServeDir::new("dist").fallback(ServeFile::new("dist/index.html"));
 
