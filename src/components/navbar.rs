@@ -55,7 +55,7 @@ pub fn navbar(props: &NavbarProps) -> Html {
             _ => "🎁",
         };
         html! {
-            <span class="text-xl h-6 w-6 inline-flex items-center justify-center cursor-pointer select-none" title={format!("{} - Toggle Light/Dark", name)}>
+            <span class="text-xl h-6 w-6 inline-flex items-center justify-center select-none" title={name.to_string()}>
                 {emoji}
             </span>
         }

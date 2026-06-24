@@ -79,14 +79,14 @@ pub fn get_holiday_for_date(date: NaiveDate) -> Option<(&'static str, &'static s
 
 /// Helper to check if a theme string belongs to a holiday.
 pub fn is_holiday_theme(theme: &str) -> bool {
-    theme.starts_with("newyear-")
-        || theme.starts_with("valentine-")
-        || theme.starts_with("stpatrick-")
-        || theme.starts_with("easter-")
-        || theme.starts_with("independence-")
-        || theme.starts_with("halloween-")
-        || theme.starts_with("thanksgiving-")
-        || theme.starts_with("christmas-")
+    theme == "newyear"
+        || theme == "valentine"
+        || theme == "stpatrick"
+        || theme == "easter"
+        || theme == "independence"
+        || theme == "halloween"
+        || theme == "thanksgiving"
+        || theme == "christmas"
 }
 
 /// Returns a holiday-specific 5-letter word for the given puzzle index.
