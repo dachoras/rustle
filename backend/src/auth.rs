@@ -35,6 +35,7 @@ pub struct AppState {
     pub site_title: String,
     #[allow(dead_code)]
     pub allowed_origins: String,
+    pub enable_translation: bool,
 }
 
 #[derive(Deserialize)]
@@ -154,6 +155,7 @@ pub async fn pin_required(
         "locked": locked,
         "attempts_left": attempts_left,
         "lockout_minutes": lockout_seconds.div_ceil(60),
+        "enable_translation": state.enable_translation,
     }))
 }
 

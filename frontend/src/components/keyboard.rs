@@ -140,6 +140,7 @@ pub struct KeyboardProps {
 
 #[function_component(Keyboard)]
 pub fn keyboard(props: &KeyboardProps) -> Html {
+    let i18n = use_context::<crate::i18n::I18nContext>().unwrap();
     let solution = props.solution.clone();
     let guesses = props.guesses.clone();
     let on_char = props.on_char.clone();
@@ -227,11 +228,11 @@ pub fn keyboard(props: &KeyboardProps) -> Html {
             </div>
             <div class="flex justify-center w-full mb-1">
                 <Key value="ENTER" on_click={click_key.clone()} solution_len={solution_len}>
-                    {crate::constants::config::ENTER_TEXT}
+                    {i18n.translations.enter}
                 </Key>
                 {render_row(&row3)}
                 <Key value="DELETE" on_click={click_key.clone()} solution_len={solution_len}>
-                    {crate::constants::config::DELETE_TEXT}
+                    {i18n.translations.delete}
                 </Key>
             </div>
         </div>

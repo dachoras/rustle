@@ -37,6 +37,7 @@ mod app_state;
 mod components;
 mod constants;
 mod helpers;
+mod i18n;
 
 use app::App;
 

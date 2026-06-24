@@ -53,4 +53,5 @@ features = [
   "MouseEvent",
   "KeyboardEvent",
   "History",
+  "HtmlSelectElement",
 ]

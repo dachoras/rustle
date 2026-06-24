@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Rustle.  If not, see <https://www.gnu.org/licenses/>.
 
+#![allow(dead_code)]
+
 //! Configuration parameters and localized strings.
 //! Consolidates application rules, alerts timing, cryptographic keys, and UI text elements.
 // Game parameters

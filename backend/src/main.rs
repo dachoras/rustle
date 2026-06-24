@@ -50,10 +50,15 @@ async fn main() {
             !p.is_empty() && p.chars().all(|c| c.is_ascii_digit()) && p.len() >= 4 && p.len() <= 10
         });
 
+    let enable_translation = std::env::var("ENABLE_TRANSLATION")
+        .map(|v| v == "true" || v == "on")
+        .unwrap_or(false);
+
     let app_state = AppState {
         pin,
         site_title,
         allowed_origins: allowed_origins.clone(),
+        enable_translation,
     };
 
     let cors = get_cors_layer(&allowed_origins);

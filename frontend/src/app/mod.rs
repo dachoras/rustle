@@ -52,15 +52,23 @@ pub fn app() -> Html {
     let state = use_reducer(move || AppState::new(solution, is_latest_game, *prefers_dark));
 
     let is_pin_required = use_state(|| false);
+    let enable_translation = use_state(|| false);
+    let language_state = use_state(crate::i18n::get_saved_language);
 
     {
         let is_pin_required = is_pin_required.clone();
+        let enable_translation = enable_translation.clone();
         use_effect_with((), move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(resp) = gloo_net::http::Request::get("/api/pin-required").send().await {
                     if let Ok(json) = resp.json::<serde_json::Value>().await {
                         if let Some(req) = json.get("required").and_then(|v| v.as_bool()) {
                             is_pin_required.set(req);
+                        }
+                        if let Some(trans) = json.get("enable_translation").and_then(|v| v.as_bool()) {
+                            enable_translation.set(trans);
+                        } else if let Some(trans) = json.get("enableTranslation").and_then(|v| v.as_bool()) {
+                            enable_translation.set(trans);
                         }
                     }
                 }
@@ -70,16 +78,19 @@ pub fn app() -> Html {
     }
 
     let on_logout = {
+        let is_pin_required_val = *is_pin_required;
         Callback::from(move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(resp) = gloo_net::http::Request::post("/api/logout").send().await {
-                    if resp.ok() {
-                        if let Some(win) = web_sys::window() {
-                            let _ = win.location().reload();
+            if is_pin_required_val {
+                wasm_bindgen_futures::spawn_local(async move {
+                    if let Ok(resp) = gloo_net::http::Request::post("/api/logout").send().await {
+                        if resp.ok() {
+                            if let Some(win) = web_sys::window() {
+                                let _ = win.location().reload();
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         })
     };
 
@@ -115,8 +126,21 @@ pub fn app() -> Html {
         Callback::from(move |_| state.dispatch(Action::DeleteChar))
     };
 
+    let on_language_change = {
+        let lang = language_state.clone();
+        Callback::from(move |new_lang: crate::i18n::Language| {
+            crate::i18n::save_language(new_lang);
+            lang.set(new_lang);
+        })
+    };
+
+    let i18n_context = crate::i18n::I18nContext {
+        language: *language_state,
+        translations: crate::i18n::get_translations(*language_state),
+    };
+
     let on_enter =
-        enter::build_on_enter(state.clone(), show_alert.clone(), solution, is_latest_game);
+        enter::build_on_enter(state.clone(), show_alert.clone(), solution, is_latest_game, i18n_context.clone());
 
     let on_theme_click = {
         let state = state.clone();
@@ -176,28 +200,35 @@ pub fn app() -> Html {
         })
     };
 
+
+
     html! {
-        <div class="flex h-screen h-dvh flex-col app-container transition-colors duration-300">
-            <WeatherContainer theme={state.theme.clone()} is_active={state.is_effects_active} />
-            <Navbar
-                on_info_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetInfoOpen(true))) } }
-                on_stats_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetStatsOpen(true))) } }
-                on_date_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetDatePickerOpen(true))) } }
-                is_hard_mode={state.is_hard_mode}
-                on_hard_mode_click={on_hard_mode_click}
-                theme={state.theme.clone()}
-                on_theme_click={on_theme_click}
-                is_pin_required={*is_pin_required}
-                on_logout={on_logout}
-            />
-            <Alert message={state.alert_msg.clone()} is_visible={state.alert_visible} variant={state.alert_variant.clone()} />
-            <div class="mx-auto flex w-full max-w-7xl flex-grow flex-col px-1 py-1 sm:py-2 sm:px-6 lg:px-8">
-                <Grid solution={solution} guesses={state.guesses.clone()} current_guess={state.current_guess.clone()} is_revealing={state.is_revealing} current_row_class_name={state.jiggle_class.clone()} />
-                <div class="my-auto w-full">
-                    <Keyboard on_char={on_char} on_delete={on_delete} on_enter={on_enter} solution={solution} guesses={state.guesses.clone()} is_revealing={state.is_revealing} />
+        <ContextProvider<crate::i18n::I18nContext> context={i18n_context}>
+            <div class="flex h-screen h-dvh flex-col app-container transition-colors duration-300">
+                <WeatherContainer theme={state.theme.clone()} is_active={state.is_effects_active} />
+                <Navbar
+                    on_info_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetInfoOpen(true))) } }
+                    on_stats_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetStatsOpen(true))) } }
+                    on_date_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetDatePickerOpen(true))) } }
+                    is_hard_mode={state.is_hard_mode}
+                    on_hard_mode_click={on_hard_mode_click}
+                    theme={state.theme.clone()}
+                    on_theme_click={on_theme_click}
+                    is_pin_required={*is_pin_required}
+                    on_logout={on_logout}
+                    language={*language_state}
+                    on_language_change={on_language_change}
+                    enable_translation={*enable_translation}
+                />
+                <Alert message={state.alert_msg.clone()} is_visible={state.alert_visible} variant={state.alert_variant.clone()} />
+                <div class="mx-auto flex w-full max-w-7xl flex-grow flex-col px-1 py-1 sm:py-2 sm:px-6 lg:px-8">
+                    <Grid solution={solution} guesses={state.guesses.clone()} current_guess={state.current_guess.clone()} is_revealing={state.is_revealing} current_row_class_name={state.jiggle_class.clone()} />
+                    <div class="my-auto w-full">
+                        <Keyboard on_char={on_char} on_delete={on_delete} on_enter={on_enter} solution={solution} guesses={state.guesses.clone()} is_revealing={state.is_revealing} />
+                    </div>
                 </div>
+                <AppModals state={state.clone()} solution={solution} solution_index={solution_index} tomorrow={tomorrow} is_latest_game={is_latest_game} show_alert={show_alert} />
             </div>
-            <AppModals state={state.clone()} solution={solution} solution_index={solution_index} tomorrow={tomorrow} is_latest_game={is_latest_game} show_alert={show_alert} />
-        </div>
+        </ContextProvider<crate::i18n::I18nContext>>
     }
 }

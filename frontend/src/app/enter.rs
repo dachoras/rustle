@@ -17,8 +17,7 @@
 
 use crate::app_state::{Action, AppState};
 use crate::constants::config::{
-    correct_word_message, ALERT_TIME_MS, LONG_ALERT_TIME_MS, MAX_CHALLENGES,
-    NOT_ENOUGH_LETTERS_MESSAGE, REVEAL_TIME_MS, WIN_MESSAGES, WORD_NOT_FOUND_MESSAGE,
+    ALERT_TIME_MS, LONG_ALERT_TIME_MS, MAX_CHALLENGES, REVEAL_TIME_MS,
 };
 use yew::prelude::*;
 
@@ -27,6 +26,7 @@ pub fn build_on_enter(
     show_alert: Callback<(String, String, u32)>,
     solution: &'static str,
     is_latest_game: bool,
+    i18n: crate::i18n::I18nContext,
 ) -> Callback<()> {
     Callback::from(move |()| {
         if state.is_game_won || state.is_game_lost {
@@ -37,7 +37,7 @@ pub fn build_on_enter(
 
         if guess_len < sol_len {
             show_alert.emit((
-                NOT_ENOUGH_LETTERS_MESSAGE.to_string(),
+                i18n.translations.not_enough_letters.to_string(),
                 "error".to_string(),
                 ALERT_TIME_MS,
             ));
@@ -48,7 +48,7 @@ pub fn build_on_enter(
         let word = state.current_guess.clone().to_uppercase();
         if !crate::helpers::words::is_word_in_word_list(&word) {
             show_alert.emit((
-                WORD_NOT_FOUND_MESSAGE.to_string(),
+                i18n.translations.word_not_found.to_string(),
                 "error".to_string(),
                 ALERT_TIME_MS,
             ));
@@ -96,8 +96,9 @@ pub fn build_on_enter(
                 ),
             ));
 
-            let win_message = WIN_MESSAGES
-                [js_sys::Math::floor(js_sys::Math::random() * WIN_MESSAGES.len() as f64) as usize];
+            let win_messages = i18n.translations.win_messages;
+            let win_message = win_messages
+                [js_sys::Math::floor(js_sys::Math::random() * win_messages.len() as f64) as usize];
             let state_won = state.clone();
             let show_alert_clone = show_alert.clone();
             gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * sol_len as u32, move || {
@@ -121,9 +122,11 @@ pub fn build_on_enter(
 
             let state_lost = state.clone();
             let show_alert_clone = show_alert.clone();
+            let i18n_clone = i18n.clone();
             gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * (sol_len as u32 + 1), move || {
+                let msg = crate::i18n::get_correct_word_message(i18n_clone.language, solution);
                 show_alert_clone.emit((
-                    correct_word_message(solution),
+                    msg,
                     "error".to_string(),
                     LONG_ALERT_TIME_MS,
                 ));

@@ -23,9 +23,7 @@ use crate::components::modal_date_picker::DatePickerModal;
 use crate::components::modal_info::InfoModal;
 use crate::components::modal_migrate::MigrateStatsModal;
 use crate::components::modal_stats::StatsModal;
-use crate::constants::config::{
-    ALERT_TIME_MS, GAME_COPIED_MESSAGE, HARD_MODE_ALERT_MESSAGE, SHARE_FAILURE_TEXT,
-};
+use crate::constants::config::ALERT_TIME_MS;
 use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
@@ -40,6 +38,9 @@ pub struct AppModalsProps {
 
 #[function_component(AppModals)]
 pub fn app_modals(props: &AppModalsProps) -> Html {
+    let i18n = use_context::<crate::i18n::I18nContext>().unwrap();
+    let translations = i18n.translations.clone();
+
     let state = props.state.clone();
     let solution = props.solution.clone();
     let solution_index = props.solution_index;
@@ -49,9 +50,10 @@ pub fn app_modals(props: &AppModalsProps) -> Html {
 
     let share_success = {
         let show_alert = show_alert.clone();
+        let game_copied_msg = translations.game_copied.to_string();
         Callback::from(move |_| {
             show_alert.emit((
-                GAME_COPIED_MESSAGE.to_string(),
+                game_copied_msg.clone(),
                 "success".to_string(),
                 ALERT_TIME_MS,
             ))
@@ -60,9 +62,10 @@ pub fn app_modals(props: &AppModalsProps) -> Html {
 
     let share_fail = {
         let show_alert = show_alert.clone();
+        let share_fail_msg = translations.share_failure.to_string();
         Callback::from(move |_| {
             show_alert.emit((
-                SHARE_FAILURE_TEXT.to_string(),
+                share_fail_msg.clone(),
                 "error".to_string(),
                 ALERT_TIME_MS,
             ))

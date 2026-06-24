@@ -29,6 +29,9 @@ pub struct NavbarProps {
     pub on_theme_click: Callback<()>,
     pub is_pin_required: bool,
     pub on_logout: Callback<()>,
+    pub language: crate::i18n::Language,
+    pub on_language_change: Callback<crate::i18n::Language>,
+    pub enable_translation: bool,
 }
 
 #[function_component(Navbar)]
@@ -42,6 +45,15 @@ pub fn navbar(props: &NavbarProps) -> Html {
     let theme_click = props.on_theme_click.clone();
     let is_pin_required = props.is_pin_required;
     let logout_click = props.on_logout.clone();
+    let language = props.language;
+
+    let on_change_lang = {
+        let on_lang_change = props.on_language_change.clone();
+        Callback::from(move |e: Event| {
+            let select: web_sys::HtmlSelectElement = e.target_unchecked_into();
+            on_lang_change.emit(crate::i18n::Language::from_code(&select.value()));
+        })
+    };
 
     let date = crate::helpers::words::get_game_date();
     let holiday_info = crate::helpers::holidays::get_holiday_for_date(date);
@@ -114,6 +126,29 @@ pub fn navbar(props: &NavbarProps) -> Html {
                 </div>
                 <p class="absolute left-1/2 -translate-x-1/2 text-xl font-bold dark:text-white">{GAME_TITLE}</p>
                 <div class="right-icons">
+                    {if props.enable_translation {
+                        html! {
+                            <div class="language-select-container">
+                                <select
+                                    class="language-select"
+                                    id="language-select"
+                                    value={language.code()}
+                                    onchange={on_change_lang}
+                                    aria-label="Select language"
+                                >
+                                    {for crate::i18n::Language::all().iter().map(|lang| {
+                                        html! {
+                                            <option value={lang.code()} selected={language == *lang}>
+                                                {lang.label()}
+                                            </option>
+                                        }
+                                    })}
+                                </select>
+                            </div>
+                        }
+                    } else {
+                        html! {}
+                    }}
                     <button class="mr-3 focus:outline-none" onclick={move |_| theme_click.emit(())} aria-label="Toggle theme">
                         {theme_toggle_icon}
                     </button>
