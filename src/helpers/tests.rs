@@ -72,16 +72,17 @@ fn test_is_word_in_word_list() {
 
 #[test]
 fn test_date_indices_and_solutions() {
-    let base_date = NaiveDate::from_ymd_opt(2022, 1, 1).unwrap();
-    let index = get_index(base_date);
-    assert_eq!(index, 0);
+    // 2022-01-05 is a non-holiday (New Year's spread is Dec 31 - Jan 1).
+    let test_date = NaiveDate::from_ymd_opt(2022, 1, 5).unwrap();
+    let index = get_index(test_date);
+    assert_eq!(index, 4);
 
-    let word = get_word_of_day(0);
+    let word = get_word_of_day(4);
     assert_eq!(word.len(), 5);
 
-    let sol = get_solution(base_date);
+    let sol = get_solution(test_date);
     assert_eq!(sol.solution, word);
-    assert_eq!(sol.solution_index, 0);
+    assert_eq!(sol.solution_index, 4);
 }
 
 #[test]
@@ -148,4 +149,30 @@ fn test_generate_emoji_grid() {
     let grid = generate_emoji_grid("WATER", &guesses, &tiles);
     assert!(grid.contains("🟨⬛⬛⬛🟨"));
     assert!(grid.contains("🟩🟩🟩🟩🟩"));
+}
+
+#[test]
+fn test_holiday_words_validity() {
+    let prefixes = vec![
+        "newyear",
+        "valentine",
+        "stpatrick",
+        "easter",
+        "independence",
+        "halloween",
+        "thanksgiving",
+        "christmas",
+    ];
+
+    for prefix in prefixes {
+        for idx in 0..100 {
+            let word = crate::helpers::holidays::get_holiday_word(prefix, idx);
+            assert!(
+                crate::helpers::words::is_word_in_word_list(word),
+                "Holiday word '{}' for prefix '{}' is not present in dictionary files",
+                word,
+                prefix
+            );
+        }
+    }
 }

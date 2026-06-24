@@ -89,6 +89,99 @@ pub fn is_holiday_theme(theme: &str) -> bool {
         || theme.starts_with("christmas-")
 }
 
+/// Returns a holiday-specific 5-letter word for the given puzzle index.
+/// Scrambles the index using a seeded Linear Congruential Generator step to make word choices
+/// non-sequential and unpredictable, while remaining completely deterministic.
+pub fn get_holiday_word(prefix: &str, index: i32) -> &'static str {
+    let list: &[&str] = match prefix {
+        "newyear" => &[
+            "BEERS", "BEGIN", "BELLS", "BOOZE", "BOOZY", "BURST", "CHAMP", "CHEER", "CHIME",
+            "CLASS", "CLEAN", "CLOCK", "COUNT", "CROWD", "CROWN", "CUPPY", "DANCE", "DREAM",
+            "DRINK", "EVENT", "FAITH", "FESTS", "FESTY", "FIRST", "FLASH", "FLUTE", "FRESH",
+            "FROST", "GLASS", "GLORY", "GLOWS", "GOALS", "GRACE", "GREET", "HAPPY", "LAGER",
+            "LIGHT", "LUCKY", "MIDST", "MUSIC", "NIGHT", "NOISE", "PARTY", "PEACE", "PEALS",
+            "PROUD", "SHARE", "SHINE", "SMILE", "SMOKE", "SPARK", "STAGE", "START", "STEEL",
+            "SWEET", "TIMES", "TOAST", "VALOR", "WATCH", "WINDY", "WINES", "YEARS", "YOUTH",
+        ],
+        "valentine" => &[
+            "ADORE", "AMOUR", "ANGEL", "BEAUT", "BLUSH", "BOOST", "BRIDE", "CANDY", "CARDS",
+            "CHARM", "CHEEK", "CUPID", "DATES", "DEARY", "DREAM", "FAITH", "FANCY", "FEELS",
+            "FEVER", "FLAME", "FLESH", "FLIRT", "GIFTS", "GLIDE", "GLOWS", "GRACE", "GREAT",
+            "GROOM", "HEART", "HONEY", "HUGGY", "KISSY", "LOVED", "LOVER", "LOVES", "LUCKY",
+            "MARRY", "MERRY", "PEACE", "PEACH", "PEARL", "PINKS", "POEMS", "PRIDE", "PULSE",
+            "REDDY", "ROSES", "SHINE", "SMILE", "SWEET", "TIARA", "TOUCH", "TRUST", "UNION",
+            "VALES", "VERSE", "VOICE", "WARMS", "WRITE",
+        ],
+        "stpatrick" => &[
+            "BEERS", "BOOZE", "BOOZY", "CELTS", "CHARM", "CHEER", "CIDER", "CLANS", "CLOUD",
+            "CLOVE", "COINS", "CRAFT", "CROSS", "CROWN", "CUPPY", "DANCE", "DRINK", "FAIRY",
+            "FEAST", "FIELD", "FLUTE", "FOLKS", "GLORY", "GOLDS", "GOLDY", "GRASS", "GREEN",
+            "HAPPY", "HARPS", "HEART", "HILLY", "LAGER", "LEAFY", "LUCKS", "LUCKY", "MAGIC",
+            "MARCH", "MERRY", "PATTY", "PEACE", "PINTS", "PIPER", "PIPES", "POTTY", "RAINY",
+            "RIVER", "ROADS", "SALTS", "SHAME", "SHEEN", "SHIRE", "SHORE", "SNAKE", "SONGS",
+            "STEEL", "STONE", "STORY", "STOUT", "SWEET", "TOADS", "TOAST", "TUNES", "VALOR",
+        ],
+        "easter" => &[
+            "ALIVE", "ALTAR", "ANGEL", "ARISE", "BIBLE", "BIRTH", "BLOOM", "BUNNY", "CANDY",
+            "CHICK", "CHIRP", "CHOIR", "CLOUD", "CLOVE", "COCOA", "COLOR", "CROSS", "DAISY",
+            "DYING", "EARTH", "FAITH", "FIELD", "FLORA", "FRESH", "GIFTS", "GLORY", "GLOWS",
+            "GRACE", "GRASS", "GREEN", "HAPPY", "HARES", "HONOR", "HOPPY", "HYMNS", "JELLY",
+            "JUMPS", "LAMBS", "LEAPS", "LIGHT", "LILAC", "MERCY", "NESTS", "PAINT", "PEACE",
+            "PEACH", "PETAL", "PLANT", "PRAYS", "PRIME", "RABBI", "RISEN", "RISES", "ROOTS",
+            "ROSES", "SEEDS", "SHEEP", "SHINE", "SPRIG", "START", "SWEET", "TULIP", "WARMS",
+            "WHITE", "YOUTH",
+        ],
+        "independence" => &[
+            "BANDS", "BEACH", "BEERS", "BLAST", "BOOMS", "BOOMY", "BRASS", "BRAVE", "BURST",
+            "CHIPS", "CIVIC", "CROWD", "DANCE", "DRINK", "DRUMS", "EAGLE", "FESTS", "FIRES",
+            "FLAGS", "FLAME", "FLASH", "FLUTE", "FREED", "FREER", "FREES", "GLORY", "GLOWS",
+            "GREAT", "GRILL", "HAPPY", "HONOR", "LAKES", "LANDS", "LIGHT", "MARCH", "MEATS",
+            "MUSIC", "NIGHT", "OCEAN", "PARTY", "PEACE", "PIPES", "PRIDE", "PROUD", "RIVER",
+            "SALAD", "SHINE", "SHORE", "SMOKE", "SPARK", "STARS", "STATE", "STEAK", "STRIP",
+            "SUNNS", "SUNNY", "SWIMS", "TOAST", "UNION", "UNITE", "VALOR", "WATER", "WHITE",
+            "WINES",
+        ],
+        "halloween" => &[
+            "BATTY", "BEAST", "BLACK", "BLOOD", "BONES", "BONEY", "CANDY", "CLAWS", "CLOWN",
+            "CORPS", "CREEP", "CROWS", "CRYPT", "CURSE", "DARKS", "DEATH", "DEMON", "DEVIL",
+            "DREAD", "FANGS", "FOGGY", "GHOST", "GHOUL", "GLOOM", "GRAVE", "HAUNT", "HOWLS",
+            "MAGIC", "MASKS", "MISTS", "MISTY", "MOANS", "MUMMY", "NIGHT", "OOZES", "SCARE",
+            "SCARY", "SHADE", "SHADY", "SHARK", "SHOCK", "SKULL", "SLIME", "SLIMY", "SPELL",
+            "SPIDE", "SPOOK", "STORM", "SWEET", "TOMBS", "TREAT", "WINDY", "WITCH", "WOLFS",
+        ],
+        "thanksgiving" => &[
+            "AMBER", "APPLE", "BAKES", "BERRY", "BLESS", "BREAD", "BROWN", "CARVE", "CHEER",
+            "CHILL", "CIDER", "COLDS", "COOKS", "CROWD", "CRUST", "DINER", "FAITH", "FALLS",
+            "FEAST", "FLOUR", "FROST", "GIFTS", "GOLDS", "GOLDY", "GRACE", "GRAIN", "GRAVY",
+            "GROUP", "GUEST", "HAPPY", "HEART", "HOMEY", "HONEY", "LEAFY", "LOVES", "MAIZE",
+            "PEACE", "PEARS", "PLATE", "PLUMS", "PRAYS", "PRIDE", "ROAST", "SAUCE", "SHARE",
+            "SMELL", "SPICE", "SUGAR", "SWEET", "TABLE", "TASTE", "THANK", "WARMS", "WHEAT",
+            "WINES",
+        ],
+        "christmas" => &[
+            "ANGEL", "BEAMS", "BELLS", "BIRTH", "CABIN", "CAKES", "CANDY", "CAROL", "CHILL",
+            "CHIME", "CHOIR", "CHUTE", "COLDS", "ELVES", "FAITH", "FIRES", "FROST", "GIFTS",
+            "GIVER", "GIVES", "GLORY", "GLOWS", "GOLDS", "GOLDY", "GRACE", "GREEN", "GUEST",
+            "HAPPY", "HOLLY", "HOMES", "HOMEY", "HYMNS", "ICIER", "ICING", "JESUS", "JOLLY",
+            "LIGHT", "MERRY", "NORTH", "PEACE", "PEALS", "PINES", "POLES", "SHARE", "SHINE",
+            "SINGS", "SLEET", "SNOWS", "SNOWY", "STARS", "SWEET", "TREES", "WHITE",
+        ],
+        _ => &[],
+    };
+
+    if list.is_empty() {
+        return "";
+    }
+
+    let seed = index.max(0) as u64;
+    let multiplier: u64 = 6364136223846793005;
+    let increment: u64 = 1442695040888963407;
+    let scrambled = seed.wrapping_mul(multiplier).wrapping_add(increment);
+    let target_idx = scrambled as usize % list.len();
+
+    list[target_idx]
+}
+
 /// Meeus/Jones/Butcher algorithm for Easter Sunday (Gregorian calendar).
 fn get_easter_sunday(year: i32) -> NaiveDate {
     let a = year % 19;
