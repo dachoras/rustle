@@ -18,3 +18,6 @@ services:
       ALLOWED_ORIGINS: ${RUSTLE_ALLOWED_ORIGINS:-*}
       # Timezone
       TZ: ${TZ:-UTC}
+      ENABLE_TRANSLATION: ${ENABLE_TRANSLATION:-false}
+      MAX_ATTEMPTS: ${MAX_ATTEMPTS:-5}
+
