@@ -69,17 +69,9 @@ jobs:
           # Initialize tags list
           TAGS=""
           
-          # Add GHCR tags
-          TAGS="${TAGS}${LOWER_IMAGE_NAME_GHCR}:${VERSION}"
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            TAGS="${TAGS},${LOWER_IMAGE_NAME_GHCR}:latest"
-          elif [ "${{ github.ref }}" = "refs/heads/dev" ]; then
-            TAGS="${TAGS},${LOWER_IMAGE_NAME_GHCR}:dev"
-          fi
-          
           # Add Docker Hub tags (if credentials exist)
           if [ "${{ secrets.DOCKER_USERNAME }}" != "" ]; then
-            TAGS="${TAGS},${LOWER_IMAGE_NAME_DOCKER}:${VERSION}"
+            TAGS="${LOWER_IMAGE_NAME_DOCKER}:${VERSION}"
             if [ "${{ github.ref }}" = "refs/heads/main" ]; then
               TAGS="${TAGS},${LOWER_IMAGE_NAME_DOCKER}:latest"
             elif [ "${{ github.ref }}" = "refs/heads/dev" ]; then
