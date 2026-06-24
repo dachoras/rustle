@@ -58,9 +58,9 @@ pub fn key_btn(props: &KeyProps) -> Html {
     let is_special_key = value == "ENTER" || value == "DELETE";
 
     let (width_class, height_class) = if is_special_key {
-        ("w-[13vw] max-w-[62px] sm:w-16 md:w-20 lg:w-24", "h-[11vw] max-h-[46px] sm:h-14")
+        ("w-[14vw] max-w-[70px] sm:w-16 md:w-20 lg:w-24", "h-[12vw] max-h-[54px] sm:h-14")
     } else {
-        ("w-[8.5vw] max-w-[40px] sm:w-10 md:w-12 lg:w-14", "h-[11vw] max-h-[46px] sm:h-14")
+        ("w-[9vw] max-w-[46px] sm:w-10 md:w-12 lg:w-14", "h-[12vw] max-h-[54px] sm:h-14")
     };
 
     let mut key_classes = classes!(
@@ -68,7 +68,8 @@ pub fn key_btn(props: &KeyProps) -> Html {
         "items-center",
         "justify-center",
         "rounded",
-        "mx-0.5",
+        "mx-[1.5px]",
+        "sm:mx-0.5",
         "font-bold",
         "cursor-pointer",
         "select-none",
