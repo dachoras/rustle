@@ -15,9 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Rustle.  If not, see <https://www.gnu.org/licenses/>.
 
+#![allow(deprecated)]
+
 use yew::prelude::*;
-use web_sys::{window, Element};
-use gloo_timers::callback::{Interval, Timeout};
+use web_sys::{window, HtmlCanvasElement, CanvasRenderingContext2d};
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use std::rc::Rc;
+use std::cell::RefCell;
+
+type LoopClosure = Rc<RefCell<Option<Closure<dyn FnMut()>>>>;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct WeatherContainerProps {
@@ -25,224 +32,266 @@ pub struct WeatherContainerProps {
     pub is_active: bool,
 }
 
+struct CollisionRect {
+    left: f32,
+    right: f32,
+    top: f32,
+    bottom: f32,
+}
+
+struct Particle {
+    x: f32,
+    y: f32,
+    vx: f32,
+    vy: f32,
+    size: f32,
+    color: &'static str,
+    text: Option<&'static str>,
+    life: f32,
+    max_life: f32,
+    is_splash: bool,
+}
+
+fn get_element_rect(id_or_class: &str, is_id: bool) -> Option<CollisionRect> {
+    let document = window()?.document()?;
+    let el = if is_id {
+        document.get_element_by_id(id_or_class)
+    } else {
+        document.query_selector(id_or_class).ok().flatten()
+    }?;
+    let rect = el.get_bounding_client_rect();
+    Some(CollisionRect {
+        left: rect.left() as f32,
+        right: rect.right() as f32,
+        top: rect.top() as f32,
+        bottom: rect.bottom() as f32,
+    })
+}
+
+fn spawn_particle(particles: &mut Vec<Particle>, effect: &str, w: f32, h: f32) {
+    let r = js_sys::Math::random() as f32;
+    let r2 = js_sys::Math::random() as f32;
+    let r3 = js_sys::Math::random() as f32;
+    let mut p = Particle {
+        x: r * w, y: -20.0, vx: (r2 - 0.5) * 1.0, vy: 1.0 + r3 * 1.0,
+        size: 3.0, color: "#ffffff", text: None, life: 220.0, max_life: 220.0, is_splash: false,
+    };
+    match effect {
+        "rain" => {
+            p.y = -50.0; p.vx = 1.5 + r2 * 0.5; p.vy = 12.0 + r3 * 3.0;
+            p.size = 15.0; p.color = "rgba(165, 243, 252, 0.4)";
+        }
+        "ember" | "wisp" => {
+            p.y = h + 15.0; p.vx = (r2 - 0.5) * 1.5; p.vy = -1.2 - r3 * 1.5;
+            p.size = 2.0 + r2 * 4.0;
+            p.color = if effect == "ember" { if r > 0.5 { "#f97316" } else { "#ef4444" } }
+                      else { if r > 0.5 { "#06b6d4" } else { "#d946ef" } };
+        }
+        "bubble" => {
+            p.y = h + 15.0; p.vx = (r2 - 0.5) * 0.8; p.vy = -0.8 - r3 * 1.2;
+            p.size = 4.0 + r2 * 6.0; p.color = "rgba(45, 212, 191, 0.4)";
+        }
+        "spore" | "pollen" => {
+            p.vx = (r2 - 0.5) * 1.0; p.vy = 0.7 + r3 * 1.0; p.size = 2.0 + r2 * 3.0;
+            p.color = if effect == "spore" { "rgba(34, 197, 94, 0.4)" } else { "#a3e635" };
+        }
+        "snowflake" => { p.size = 1.5 + r2 * 2.5; }
+        "confetti" => {
+            p.vx = (r2 - 0.5) * 2.0; p.vy = 2.0 + r3 * 3.0; p.size = 5.0;
+            p.color = ["#f59e0b", "#ef4444", "#3b82f6", "#10b981", "#ec4899", "#a855f7"][(r * 6.0) as usize];
+        }
+        "heart" => { p.y = h + 15.0; p.vy = -1.0 - r3 * 1.2; p.text = Some(if r > 0.5 { "💖" } else { "❤️" }); }
+        "shamrock" => { p.text = Some(if r > 0.5 { "🍀" } else { "☘️" }); }
+        "leaf" => { p.text = Some(["🍂", "🍁", "🍃"][(r * 3.0) as usize]); }
+        "spooky" => { p.text = Some(["👻", "🦇", "🎃", "🕷️"][(r * 4.0) as usize]); }
+        "sparkle" => { p.text = Some("✨"); }
+        _ => {}
+    }
+    particles.push(p);
+}
+
+fn update_and_draw(
+    particles: &mut Vec<Particle>, ctx: &CanvasRenderingContext2d, w: f32, h: f32,
+    effect: &str, grid_rect: &Option<CollisionRect>, kb_rect: &Option<CollisionRect>,
+) {
+    ctx.clear_rect(0.0, 0.0, w as f64, h as f64);
+    let is_rain = effect == "rain";
+    let is_bubble = effect == "bubble";
+    let mut splashes = Vec::new();
+
+    for p in particles.iter_mut() {
+        if p.is_splash { p.vy += 0.15; }
+        else if effect == "snowflake" || effect == "leaf" || effect == "shamrock" {
+            p.vx += (js_sys::Math::random() as f32 - 0.5) * 0.1;
+        }
+        p.x += p.vx; p.y += p.vy; p.life -= 1.0;
+        if p.life <= 0.0 { continue; }
+
+        if !p.is_splash {
+            for rect in [grid_rect.as_ref(), kb_rect.as_ref()].into_iter().flatten() {
+                if p.vy > 0.0 && p.y >= rect.top && p.y - p.vy <= rect.top && p.x >= rect.left && p.x <= rect.right {
+                    if is_rain {
+                        p.life = 0.0;
+                        for _ in 0..3 {
+                            splashes.push(Particle {
+                                x: p.x, y: rect.top - 1.0, vx: (js_sys::Math::random() as f32 - 0.5) * 3.0,
+                                vy: -1.5 - js_sys::Math::random() as f32 * 1.5, size: 1.5,
+                                color: "rgba(165, 243, 252, 0.6)", text: None, life: 15.0, max_life: 15.0, is_splash: true,
+                            });
+                        }
+                    } else {
+                        p.y = rect.top - 2.0; p.vy = -p.vy * 0.3; p.vx += (js_sys::Math::random() as f32 - 0.5) * 1.0;
+                    }
+                }
+                if p.vy < 0.0 && p.y <= rect.bottom && p.y - p.vy >= rect.bottom && p.x >= rect.left && p.x <= rect.right {
+                    p.y = rect.bottom + 2.0; p.vy = -p.vy * 0.3; p.vx += (js_sys::Math::random() as f32 - 0.5) * 1.0;
+                }
+            }
+        }
+
+        if p.y > h + 50.0 || p.y < -50.0 || p.x < -50.0 || p.x > w + 50.0 { p.life = 0.0; continue; }
+        ctx.set_global_alpha((p.life / p.max_life).min(1.0) as f64);
+
+        if let Some(txt) = p.text {
+            ctx.set_font("16px sans-serif");
+            let _ = ctx.fill_text(txt, p.x as f64, p.y as f64);
+        } else if is_rain {
+            ctx.set_stroke_style(&JsValue::from_str(p.color));
+            ctx.set_line_width(1.0);
+            ctx.begin_path();
+            ctx.move_to(p.x as f64, p.y as f64);
+            ctx.line_to((p.x - p.vx) as f64, (p.y - p.vy) as f64);
+            ctx.stroke();
+        } else {
+            ctx.set_fill_style(&JsValue::from_str(p.color));
+            ctx.begin_path();
+            let _ = ctx.arc(p.x as f64, p.y as f64, p.size as f64, 0.0, std::f64::consts::TAU);
+            if is_bubble {
+                ctx.set_stroke_style(&JsValue::from_str(p.color));
+                ctx.set_line_width(1.0);
+                ctx.stroke();
+            } else {
+                ctx.fill();
+            }
+        }
+    }
+    particles.retain(|p| p.life > 0.0);
+    particles.extend(splashes);
+}
+
 #[function_component(WeatherContainer)]
 pub fn weather_container(props: &WeatherContainerProps) -> Html {
-    let container_ref = use_node_ref();
+    let canvas_ref = use_node_ref();
     let theme = props.theme.clone();
     let is_active = props.is_active;
 
     {
-        let container_ref = container_ref.clone();
+        let canvas_ref = canvas_ref.clone();
         use_effect_with((theme, is_active), move |(theme, is_active)| {
-            let container_opt = container_ref.cast::<Element>();
-            let mut opt_interval = None;
+            let canvas_opt = canvas_ref.cast::<HtmlCanvasElement>();
+            let loop_closure: LoopClosure = Rc::new(RefCell::new(None));
 
-            if let Some(container) = &container_opt {
-                // Clear any old particles
-                container.set_inner_html("");
-
-                if *is_active {
-                    // Determine the effect type based on theme
-                    let effect = match theme.as_str() {
-                        "crateria" => "rain",
-                        "brinstar" => "pollen",
-                        "norfair" => "ember",
-                        "wrecked_ship" => "wisp",
-                        "maridia" => "bubble",
-                        "tourian" => "spore",
-                        "newyear" => "confetti",
-                        "valentine" => "heart",
-                        "stpatrick" => "shamrock",
-                        "easter" => "easteregg",
-                        "independence" => "sparkle",
-                        "halloween" => "spooky",
-                        "thanksgiving" => "leaf",
-                        "christmas" => "snowflake",
-                        _ => "rain",
-                    };
-
-                    // Spawning closure
-                    let spawn_particle = {
-                        let container = container.clone();
-                        let effect = effect.to_string();
-                        move || {
-                            let window = match window() {
-                                Some(w) => w,
-                                None => return,
-                            };
-                            let document = match window.document() {
-                                Some(d) => d,
-                                None => return,
-                            };
-                            let p = match document.create_element("div") {
-                                Ok(el) => el,
-                                Err(_) => return,
+            if *is_active {
+                if let Some(canvas) = &canvas_opt {
+                    if let Ok(Some(ctx)) = canvas.get_context("2d") {
+                        if let Ok(context) = ctx.dyn_into::<CanvasRenderingContext2d>() {
+                            let effect = match theme.as_str() {
+                                "crateria" => "rain",
+                                "brinstar" => "pollen",
+                                "norfair" => "ember",
+                                "wrecked_ship" => "wisp",
+                                "maridia" => "bubble",
+                                "tourian" => "spore",
+                                "newyear" => "confetti",
+                                "valentine" => "heart",
+                                "stpatrick" => "shamrock",
+                                "easter" => "easteregg",
+                                "independence" => "sparkle",
+                                "halloween" => "spooky",
+                                "thanksgiving" => "leaf",
+                                "christmas" => "snowflake",
+                                _ => "rain",
                             };
 
-                            let rand = js_sys::Math::random();
-                            let rand2 = js_sys::Math::random();
-                            let rand3 = js_sys::Math::random();
+                            let particles = Rc::new(RefCell::new(Vec::<Particle>::new()));
+                            let win = window().unwrap();
+                            let w = win.inner_width().unwrap().as_f64().unwrap() as f32;
+                            let h = win.inner_height().unwrap().as_f64().unwrap() as f32;
+                            canvas.set_width(w as u32);
+                            canvas.set_height(h as u32);
 
-                            match effect.as_str() {
-                                "rain" => {
-                                    p.set_class_name("particle rain-drop");
-                                    let left = rand * 110.0 - 5.0;
-                                    let duration = 0.6 + rand2 * 0.4;
-                                    let style = format!("left: {:.2}%; top: -50px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
+                            for _ in 0..30 {
+                                let mut parts = particles.borrow_mut();
+                                spawn_particle(&mut parts, effect, w, h);
+                                if let Some(p) = parts.last_mut() {
+                                    p.y = js_sys::Math::random() as f32 * h;
                                 }
-                                "ember" => {
-                                    p.set_class_name("particle ember");
-                                    let diam = 4.0 + rand * 8.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 3.0 + rand3 * 3.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; bottom: -20px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "bubble" => {
-                                    p.set_class_name("particle bubble");
-                                    let diam = 8.0 + rand * 16.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 4.0 + rand3 * 4.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; bottom: -30px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "spore" => {
-                                    p.set_class_name("particle spore");
-                                    let diam = 6.0 + rand * 10.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 5.0 + rand3 * 5.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; top: -20px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "snowflake" => {
-                                    p.set_class_name("particle snowflake");
-                                    let diam = 3.0 + rand * 6.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 4.0 + rand3 * 5.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; top: -10px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "heart" => {
-                                    p.set_class_name("particle heart-particle");
-                                    let emoji = if rand > 0.5 { "💖" } else { "❤️" };
-                                    p.set_text_content(Some(emoji));
-                                    let left = rand2 * 100.0;
-                                    let duration = 3.0 + rand3 * 3.0;
-                                    let style = format!("left: {:.2}%; bottom: -20px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "shamrock" => {
-                                    p.set_class_name("particle leaf-particle");
-                                    let emoji = if rand > 0.5 { "🍀" } else { "☘️" };
-                                    p.set_text_content(Some(emoji));
-                                    let left = rand2 * 100.0;
-                                    let duration = 4.0 + rand3 * 4.0;
-                                    let style = format!("left: {:.2}%; top: -30px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "leaf" => {
-                                    p.set_class_name("particle leaf-particle");
-                                    let leaves = ["🍂", "🍁", "🍃"];
-                                    let idx = (rand * leaves.len() as f64).floor() as usize;
-                                    p.set_text_content(Some(leaves[idx]));
-                                    let left = rand2 * 100.0;
-                                    let duration = 5.0 + rand3 * 5.0;
-                                    let style = format!("left: {:.2}%; top: -30px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "spooky" => {
-                                    p.set_class_name("particle spooky-particle");
-                                    let symbols = ["👻", "🦇", "🎃", "🕷️"];
-                                    let idx = (rand * symbols.len() as f64).floor() as usize;
-                                    p.set_text_content(Some(symbols[idx]));
-                                    let left = rand2 * 100.0;
-                                    let duration = 6.0 + rand3 * 4.0;
-                                    let style = format!("left: {:.2}%; top: -30px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "confetti" => {
-                                    p.set_class_name("particle confetti-particle");
-                                    let colors = ["#f59e0b", "#ef4444", "#3b82f6", "#10b981", "#ec4899", "#a855f7"];
-                                    let idx = (rand * colors.len() as f64).floor() as usize;
-                                    let left = rand2 * 100.0;
-                                    let duration = 2.0 + rand3 * 3.0;
-                                    let style = format!("background-color: {}; left: {:.2}%; top: -15px; animation-duration: {:.2}s;", colors[idx], left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "easteregg" => {
-                                    p.set_class_name("particle spooky-particle");
-                                    let symbols = ["🥚", "🌸", "🐰", "🌷"];
-                                    let idx = (rand * symbols.len() as f64).floor() as usize;
-                                    p.set_text_content(Some(symbols[idx]));
-                                    let left = rand2 * 100.0;
-                                    let duration = 5.0 + rand3 * 4.0;
-                                    let style = format!("left: {:.2}%; top: -30px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "sparkle" => {
-                                    p.set_class_name("particle sparkle-particle");
-                                    p.set_text_content(Some("✨"));
-                                    let left = rand2 * 100.0;
-                                    let duration = 3.0 + rand3 * 2.0;
-                                    let style = format!("left: {:.2}%; top: -20px; animation-duration: {:.2}s;", left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "pollen" => {
-                                    p.set_class_name("particle pollen-particle");
-                                    let diam = 3.0 + rand * 4.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 4.0 + rand3 * 4.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; top: -20px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                "wisp" => {
-                                    p.set_class_name("particle wisp-particle");
-                                    let diam = 6.0 + rand * 8.0;
-                                    let left = rand2 * 100.0;
-                                    let duration = 3.0 + rand3 * 3.0;
-                                    let style = format!("width: {:.2}px; height: {:.2}px; left: {:.2}%; bottom: -20px; animation-duration: {:.2}s;", diam, diam, left, duration);
-                                    let _ = p.set_attribute("style", &style);
-                                }
-                                _ => {}
                             }
 
-                            let _ = container.append_child(&p);
+                            let loop_clone = loop_closure.clone();
+                            let loop_for_frame = loop_closure.clone();
+                            let parts_clone = particles.clone();
+                            let canvas_clone = canvas.clone();
+                            let ctx_clone = context.clone();
+                            let effect_str = effect.to_string();
+                            let mut frame_count = 0;
 
-                            let p_clone = p.clone();
-                            Timeout::new(8000, move || {
-                                p_clone.remove();
-                            })
-                            .forget();
+                            *loop_clone.borrow_mut() = Some(Closure::new(move || {
+                                let win = window().unwrap();
+                                let width = win.inner_width().unwrap().as_f64().unwrap() as f32;
+                                let height = win.inner_height().unwrap().as_f64().unwrap() as f32;
+
+                                if canvas_clone.width() != width as u32 || canvas_clone.height() != height as u32 {
+                                    canvas_clone.set_width(width as u32);
+                                    canvas_clone.set_height(height as u32);
+                                }
+
+                                frame_count += 1;
+                                let spawn_rate = if effect_str == "rain" { 2 } else { 8 };
+                                if frame_count % spawn_rate == 0 {
+                                    let mut parts = parts_clone.borrow_mut();
+                                    if parts.len() < 120 {
+                                        spawn_particle(&mut parts, &effect_str, width, height);
+                                    }
+                                }
+
+                                let grid_rect = get_element_rect("game-grid", true);
+                                let kb_rect = get_element_rect(".keyboard-container", false);
+
+                                let mut parts = parts_clone.borrow_mut();
+                                update_and_draw(&mut parts, &ctx_clone, width, height, &effect_str, &grid_rect, &kb_rect);
+
+                                let borrow = loop_for_frame.borrow();
+                                if let Some(ref closure) = *borrow {
+                                    let _ = win.request_animation_frame(closure.as_ref().unchecked_ref());
+                                }
+                            }));
+
+                            let borrow = loop_clone.borrow();
+                            if let Some(ref closure) = *borrow {
+                                let _ = win.request_animation_frame(closure.as_ref().unchecked_ref());
+                            }
                         }
-                    };
-
-                    for _ in 0..25 {
-                        spawn_particle();
                     }
-
-                    let rate = if effect == "rain" || effect == "snowflake" || effect == "confetti" {
-                        40
-                    } else {
-                        150
-                    };
-                    opt_interval = Some(Interval::new(rate, spawn_particle));
+                }
+            } else {
+                if let Some(canvas) = &canvas_opt {
+                    if let Ok(Some(ctx)) = canvas.get_context("2d") {
+                        if let Ok(ctx2d) = ctx.dyn_into::<CanvasRenderingContext2d>() {
+                            ctx2d.clear_rect(0.0, 0.0, canvas.width() as f64, canvas.height() as f64);
+                        }
+                    }
                 }
             }
 
-            let cleanup_container = container_opt.clone();
+            let loop_cleanup = loop_closure.clone();
             move || {
-                if let Some(interval) = opt_interval {
-                    drop(interval);
-                }
-                if let Some(container) = cleanup_container {
-                    container.set_inner_html("");
-                }
+                *loop_cleanup.borrow_mut() = None;
             }
         });
     }
 
     html! {
-        <div ref={container_ref} id="weather-container"></div>
+        <canvas ref={canvas_ref} id="weather-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
     }
 }
