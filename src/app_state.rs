@@ -31,7 +31,6 @@ pub struct AppState {
     pub alert_visible: bool,
     pub alert_variant: String,
     pub is_info_open: bool,
-    pub is_settings_open: bool,
     pub is_stats_open: bool,
     pub is_datepicker_open: bool,
     pub is_migrate_open: bool,
@@ -52,7 +51,6 @@ pub enum Action {
     ShowAlert(String, String),
     HideAlert,
     SetInfoOpen(bool),
-    SetSettingsOpen(bool),
     SetStatsOpen(bool),
     SetDatePickerOpen(bool),
     SetMigrateOpen(bool),
@@ -101,9 +99,6 @@ impl Reducible for AppState {
             }
             Action::SetInfoOpen(o) => {
                 state.is_info_open = o;
-            }
-            Action::SetSettingsOpen(o) => {
-                state.is_settings_open = o;
             }
             Action::SetStatsOpen(o) => {
                 state.is_stats_open = o;
@@ -164,7 +159,6 @@ impl AppState {
             alert_visible: false,
             alert_variant: "error".to_string(),
             is_info_open: false,
-            is_settings_open: false,
             is_stats_open: false,
             is_datepicker_open: false,
             is_migrate_open: false,

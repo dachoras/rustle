@@ -23,7 +23,8 @@ pub struct NavbarProps {
     pub on_info_click: Callback<()>,
     pub on_stats_click: Callback<()>,
     pub on_date_click: Callback<()>,
-    pub on_settings_click: Callback<()>,
+    pub is_hard_mode: bool,
+    pub on_hard_mode_click: Callback<()>,
     pub theme: String,
     pub on_theme_click: Callback<()>,
 }
@@ -33,31 +34,35 @@ pub fn navbar(props: &NavbarProps) -> Html {
     let info_click = props.on_info_click.clone();
     let stats_click = props.on_stats_click.clone();
     let date_click = props.on_date_click.clone();
-    let settings_click = props.on_settings_click.clone();
+    let is_hard_mode = props.is_hard_mode;
+    let hard_mode_click = props.on_hard_mode_click.clone();
     let theme = props.theme.clone();
     let theme_click = props.on_theme_click.clone();
 
     let theme_toggle_icon = match theme.as_str() {
-        "dark" => html! {
-            <svg id="moon-icon" class="h-6 w-6 cursor-pointer dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
+        "brinstar" => html! {
+            <svg id="leaf-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Brinstar"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1 9.8a7 7 0 0 1-9 8.2Z" /><path d="M19 2 9.8 11.5" /></svg>
         },
-        "nord" => html! {
-            <svg id="droplet-icon" class="h-6 w-6 cursor-pointer dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-13-7-13S5 10.7 5 15a7 7 0 0 0 7 7z"/></svg>
+        "norfair" => html! {
+            <svg id="flame-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Norfair"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
         },
-        "dracula" => html! {
-            <svg id="sparkles-icon" class="h-6 w-6 cursor-pointer dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5Z"/><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z"/></svg>
+        "wrecked_ship" => html! {
+            <svg id="ghost-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Wrecked Ship"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>
         },
-        "sepia" => html! {
-            <svg id="coffee-icon" class="h-6 w-6 cursor-pointer dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+        "maridia" => html! {
+            <svg id="waves-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Maridia"><path d="M2 6c.6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1" /><path d="M2 12c.6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1" /><path d="M2 18c.6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1 .6 0 1.2-.4 1.8-1 1.2-1.2 2.4-1.2 3.6 0 .6.6 1.2 1 1.8 1" /></svg>
+        },
+        "tourian" => html! {
+            <svg id="target-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Tourian"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
         },
         _ => html! {
-            <svg id="sun-icon" class="h-6 w-6 cursor-pointer dark:stroke-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="M4.93 4.93l1.41 1.41" /><path d="M17.66 17.66l1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="M6.34 17.66l-1.41 1.41" /><path d="M19.07 4.93l-1.41 1.41" /></svg>
+            <svg id="cloud-rain-icon" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Crateria"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25" /><path d="M8 20v2" /><path d="M12 20v2" /><path d="M16 20v2" /></svg>
         },
     };
 
     html! {
         <div class="navbar">
-            <div class="navbar-content px-5 short:h-auto">
+            <div class="navbar-content relative px-5 short:h-auto">
                 <div class="flex">
                     <button class="focus:outline-none" onclick={move |_| info_click.emit(())} aria-label="Info">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 cursor-pointer dark:stroke-white">
@@ -76,7 +81,7 @@ pub fn navbar(props: &NavbarProps) -> Html {
                         html! {}
                     }}
                 </div>
-                <p class="text-xl font-bold dark:text-white">{GAME_TITLE}</p>
+                <p class="absolute left-1/2 -translate-x-1/2 text-xl font-bold dark:text-white">{GAME_TITLE}</p>
                 <div class="right-icons">
                     <button class="mr-3 focus:outline-none" onclick={move |_| stats_click.emit(())} aria-label="Stats">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 cursor-pointer dark:stroke-white">
@@ -86,10 +91,9 @@ pub fn navbar(props: &NavbarProps) -> Html {
                     <button class="mr-3 focus:outline-none" onclick={move |_| theme_click.emit(())} aria-label="Toggle theme">
                         {theme_toggle_icon}
                     </button>
-                    <button class="focus:outline-none" onclick={move |_| settings_click.emit(())} aria-label="Settings">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 cursor-pointer dark:stroke-white">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.991l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <button class="focus:outline-none" onclick={move |_| hard_mode_click.emit(())} aria-label="Hard Mode">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 cursor-pointer" width="24" height="24" viewBox="0 0 24 24" fill={if is_hard_mode { "currentColor" } else { "none" }} stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" title="Hard Mode">
+                            <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                         </svg>
                     </button>
                 </div>

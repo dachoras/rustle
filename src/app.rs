@@ -196,11 +196,12 @@ pub fn app() -> Html {
         let state = state.clone();
         Callback::from(move |_| {
             let next_theme = match state.theme.as_str() {
-                "light" => "dark",
-                "dark" => "nord",
-                "nord" => "dracula",
-                "dracula" => "sepia",
-                _ => "light",
+                "crateria" => "brinstar",
+                "brinstar" => "norfair",
+                "norfair" => "wrecked_ship",
+                "wrecked_ship" => "maridia",
+                "maridia" => "tourian",
+                _ => "crateria",
             };
             state.dispatch(Action::SetTheme(next_theme.to_string()));
             crate::helpers::local_storage::save_preferences_to_local_storage(
@@ -212,13 +213,47 @@ pub fn app() -> Html {
         })
     };
 
+    let on_hard_mode_click = {
+        let state = state.clone();
+        let show_alert = show_alert.clone();
+        Callback::from(move |_| {
+            let next_val = !state.is_hard_mode;
+            if next_val {
+                if state.guesses.is_empty() {
+                    state.dispatch(Action::SetHardMode(true));
+                    crate::helpers::local_storage::save_preferences_to_local_storage(
+                        &crate::helpers::local_storage::StoredPreferences {
+                            theme: state.theme.clone(),
+                            is_hard_mode: true,
+                        },
+                    );
+                } else {
+                    show_alert.emit((
+                        HARD_MODE_ALERT_MESSAGE.to_string(),
+                        "error".to_string(),
+                        ALERT_TIME_MS,
+                    ));
+                }
+            } else {
+                state.dispatch(Action::SetHardMode(false));
+                crate::helpers::local_storage::save_preferences_to_local_storage(
+                    &crate::helpers::local_storage::StoredPreferences {
+                        theme: state.theme.clone(),
+                        is_hard_mode: false,
+                    },
+                );
+            }
+        })
+    };
+
     html! {
         <div class="flex h-screen flex-col justify-between app-container transition-colors duration-300">
             <Navbar
                 on_info_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetInfoOpen(true))) } }
                 on_stats_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetStatsOpen(true))) } }
                 on_date_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetDatePickerOpen(true))) } }
-                on_settings_click={ { let s = state.clone(); Callback::from(move |_| s.dispatch(Action::SetSettingsOpen(true))) } }
+                is_hard_mode={state.is_hard_mode}
+                on_hard_mode_click={on_hard_mode_click}
                 theme={state.theme.clone()}
                 on_theme_click={on_theme_click}
             />

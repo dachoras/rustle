@@ -107,8 +107,12 @@ pub fn generate_emoji_grid(solution: &str, guesses: &[String], tiles: &[&str; 3]
 
 /// Helper returning the target emoji tiles depending on selected theme display parameters.
 fn get_emoji_tiles(theme: &str) -> [&'static str; 3] {
-    let correct = if theme == "nord" { "🟧" } else { "🟩" };
-    let present = if theme == "nord" { "🟦" } else { "🟨" };
-    let absent = if theme == "light" || theme == "sepia" { "⬜" } else { "⬛" };
-    [correct, present, absent]
+    match theme {
+        "brinstar" => ["🟩", "🟨", "⬛"],
+        "norfair" => ["🟥", "🟧", "⬛"],
+        "wrecked_ship" => ["🟦", "🟪", "⬛"],
+        "maridia" => ["🟦", "🟨", "⬛"],
+        "tourian" => ["🟩", "🟥", "⬛"],
+        _ => ["🟦", "🟪", "⬛"], // crateria
+    }
 }

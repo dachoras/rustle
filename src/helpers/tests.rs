@@ -105,7 +105,7 @@ fn test_persistence_game_state_and_preferences() {
     assert_eq!(loaded.unwrap(), state);
 
     let prefs = StoredPreferences {
-        theme: "dark".to_string(),
+        theme: "crateria".to_string(),
         is_hard_mode: true,
     };
     save_preferences_to_local_storage(&prefs);

@@ -22,7 +22,6 @@ use crate::app_state::{Action, AppState};
 use crate::components::modal_date_picker::DatePickerModal;
 use crate::components::modal_info::InfoModal;
 use crate::components::modal_migrate::MigrateStatsModal;
-use crate::components::modal_settings::SettingsModal;
 use crate::components::modal_stats::StatsModal;
 use crate::constants::config::{
     ALERT_TIME_MS, GAME_COPIED_MESSAGE, HARD_MODE_ALERT_MESSAGE, SHARE_FAILURE_TEXT,
@@ -70,40 +69,7 @@ pub fn app_modals(props: &AppModalsProps) -> Html {
         })
     };
 
-    let save_prefs = {
-        let state = state.clone();
-        move |theme: String, hard: bool| {
-            state.dispatch(Action::SetTheme(theme.clone()));
-            state.dispatch(Action::SetHardMode(hard));
-            crate::helpers::local_storage::save_preferences_to_local_storage(
-                &crate::helpers::local_storage::StoredPreferences {
-                    theme,
-                    is_hard_mode: hard,
-                },
-            );
-        }
-    };
 
-    let handle_hard_mode = {
-        let state = state.clone();
-        let show_alert = show_alert.clone();
-        let save_prefs = save_prefs.clone();
-        Callback::from(move |val| {
-            if val {
-                if state.guesses.is_empty() {
-                    save_prefs(state.theme.clone(), true);
-                } else {
-                    show_alert.emit((
-                        HARD_MODE_ALERT_MESSAGE.to_string(),
-                        "error".to_string(),
-                        ALERT_TIME_MS,
-                    ));
-                }
-            } else {
-                save_prefs(state.theme.clone(), false);
-            }
-        })
-    };
 
     html! {
         <>
@@ -115,15 +81,7 @@ pub fn app_modals(props: &AppModalsProps) -> Html {
                 } }
             />
 
-            <SettingsModal
-                is_open={state.is_settings_open}
-                handle_close={ {
-                    let state = state.clone();
-                    Callback::from(move |_| state.dispatch(Action::SetSettingsOpen(false)))
-                } }
-                is_hard_mode={state.is_hard_mode}
-                handle_hard_mode={handle_hard_mode}
-            />
+
 
             <StatsModal
                 is_open={state.is_stats_open}

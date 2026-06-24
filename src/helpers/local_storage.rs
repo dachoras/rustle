@@ -148,7 +148,7 @@ pub fn load_preferences_from_local_storage(prefers_dark: bool) -> StoredPreferen
     }
 
     if let Ok(legacy) = LocalStorage::get::<LegacyPreferences>(PREFERENCES_KEY) {
-        let theme = if let Some(t) = legacy.theme {
+        let raw_theme = if let Some(t) = legacy.theme {
             t
         } else if legacy.is_military_theme.unwrap_or(false) {
             "nord".to_string()
@@ -159,19 +159,34 @@ pub fn load_preferences_from_local_storage(prefers_dark: bool) -> StoredPreferen
         } else {
             "light".to_string()
         };
+        let theme = match raw_theme.as_str() {
+            "light" => "brinstar".to_string(),
+            "dark" => "crateria".to_string(),
+            "nord" => "maridia".to_string(),
+            "dracula" => "wrecked_ship".to_string(),
+            "sepia" => "norfair".to_string(),
+            t => t.to_string(),
+        };
         let is_hard_mode = legacy.is_hard_mode.unwrap_or(false);
         return StoredPreferences { theme, is_hard_mode };
     }
 
     #[allow(unused_mut)]
-    let mut theme = if prefers_dark { "dark".to_string() } else { "light".to_string() };
+    let mut theme = if prefers_dark { "crateria".to_string() } else { "brinstar".to_string() };
     #[allow(unused_mut)]
     let mut is_hard_mode = false;
     #[cfg(target_arch = "wasm32")]
     if let Some(win) = web_sys::window() {
         if let Ok(Some(storage)) = win.local_storage() {
             if let Ok(Some(val)) = storage.get_item("theme") {
-                theme = val;
+                theme = match val.as_str() {
+                    "light" => "brinstar".to_string(),
+                    "dark" => "crateria".to_string(),
+                    "nord" => "maridia".to_string(),
+                    "dracula" => "wrecked_ship".to_string(),
+                    "sepia" => "norfair".to_string(),
+                    t => t.to_string(),
+                };
             }
             if let Ok(Some(val)) = storage.get_item("gameMode") {
                 is_hard_mode = val == "hard";

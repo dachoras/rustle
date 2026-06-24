@@ -35,7 +35,6 @@ pub const GAME_COPIED_MESSAGE: &str = "Game copied to clipboard";
 pub const NOT_ENOUGH_LETTERS_MESSAGE: &str = "Not enough letters";
 pub const WORD_NOT_FOUND_MESSAGE: &str = "Word not found";
 pub const HARD_MODE_ALERT_MESSAGE: &str = "Hard Mode can only be enabled at the start!";
-pub const HARD_MODE_DESCRIPTION: &str = "Any revealed hints must be used in subsequent guesses";
 pub const ENTER_TEXT: &str = "Enter";
 pub const DELETE_TEXT: &str = "Delete";
 pub const STATISTICS_TITLE: &str = "Statistics";

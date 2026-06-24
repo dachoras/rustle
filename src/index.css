@@ -2,146 +2,174 @@
 @tailwind components;
 @tailwind utilities;
 
-:root, [data-theme="light"] {
+:root, [data-theme="crateria"] {
   --animation-speed: 1000ms;
   --animation-speed-fast: 250ms;
-  --bg-color: #ffffff;
-  --text-color: #0f172a;
+  --bg-color: #181524;
+  --text-color: #d3cce3;
   
-  --default-cell-bg-color: #ffffff;
-  --default-cell-border-color: #e2e8f0;
-  --default-cell-text-color: #0f172a;
+  --default-cell-bg-color: #1d182e;
+  --default-cell-border-color: #42385a;
+  --default-cell-text-color: #d3cce3;
   
-  --correct-cell-bg-color: #22c55e;
-  --present-cell-bg-color: #eab308;
-  --absent-cell-bg-color: #94a3b8;
+  --correct-cell-bg-color: #3b82f6;
+  --present-cell-bg-color: #a855f7;
+  --absent-cell-bg-color: #4b5563;
   
-  --key-default-bg: #e2e8f0;
-  --key-default-hover-bg: #cbd5e1;
-  --key-default-active-bg: #94a3b8;
-  --key-default-text: #0f172a;
+  --key-default-bg: #2b2341;
+  --key-default-hover-bg: #3d335c;
+  --key-default-active-bg: #1a1529;
+  --key-default-text: #d3cce3;
   
-  --key-correct-bg: #22c55e;
-  --key-present-bg: #eab308;
-  --key-absent-bg: #94a3b8;
+  --key-correct-bg: #3b82f6;
+  --key-present-bg: #a855f7;
+  --key-absent-bg: #4b5563;
   --key-state-text: #ffffff;
 
-  --modal-bg: #ffffff;
-  --modal-text: #0f172a;
-  --modal-desc: #64748b;
-  --modal-border: #e2e8f0;
+  --modal-bg: #1d182e;
+  --modal-text: #d3cce3;
+  --modal-desc: #8e81ac;
+  --modal-border: #42385a;
 }
 
-[data-theme="dark"] {
-  --bg-color: #0f172a;
-  --text-color: #f8fafc;
+[data-theme="brinstar"] {
+  --bg-color: #0c1a10;
+  --text-color: #a3e635;
   
-  --default-cell-bg-color: #0f172a;
-  --default-cell-border-color: #334155;
-  --default-cell-text-color: #f8fafc;
+  --default-cell-bg-color: #112417;
+  --default-cell-border-color: #22543d;
+  --default-cell-text-color: #a3e635;
   
-  --correct-cell-bg-color: #22c55e;
+  --correct-cell-bg-color: #10b981;
+  --present-cell-bg-color: #eab308;
+  --absent-cell-bg-color: #27272a;
+  
+  --key-default-bg: #1b3d27;
+  --key-default-hover-bg: #275737;
+  --key-default-active-bg: #0f2618;
+  --key-default-text: #a3e635;
+  
+  --key-correct-bg: #10b981;
+  --key-present-bg: #eab308;
+  --key-absent-bg: #27272a;
+  --key-state-text: #ffffff;
+
+  --modal-bg: #112417;
+  --modal-text: #a3e635;
+  --modal-desc: #4ade80;
+  --modal-border: #22543d;
+}
+
+[data-theme="norfair"] {
+  --bg-color: #1a0502;
+  --text-color: #fde047;
+  
+  --default-cell-bg-color: #280a04;
+  --default-cell-border-color: #5c1305;
+  --default-cell-text-color: #fde047;
+  
+  --correct-cell-bg-color: #ef4444;
+  --present-cell-bg-color: #f97316;
+  --absent-cell-bg-color: #450a0a;
+  
+  --key-default-bg: #401007;
+  --key-default-hover-bg: #59170a;
+  --key-default-active-bg: #240a05;
+  --key-default-text: #fde047;
+  
+  --key-correct-bg: #ef4444;
+  --key-present-bg: #f97316;
+  --key-absent-bg: #450a0a;
+  --key-state-text: #ffffff;
+
+  --modal-bg: #280a04;
+  --modal-text: #fde047;
+  --modal-desc: #f87171;
+  --modal-border: #5c1305;
+}
+
+[data-theme="wrecked_ship"] {
+  --bg-color: #0f091a;
+  --text-color: #a5f3fc;
+  
+  --default-cell-bg-color: #180e29;
+  --default-cell-border-color: #3b2263;
+  --default-cell-text-color: #a5f3fc;
+  
+  --correct-cell-bg-color: #06b6d4;
+  --present-cell-bg-color: #d946ef;
+  --absent-cell-bg-color: #475569;
+  
+  --key-default-bg: #261642;
+  --key-default-hover-bg: #392263;
+  --key-default-active-bg: #160d26;
+  --key-default-text: #a5f3fc;
+  
+  --key-correct-bg: #06b6d4;
+  --key-present-bg: #d946ef;
+  --key-absent-bg: #475569;
+  --key-state-text: #ffffff;
+
+  --modal-bg: #180e29;
+  --modal-text: #a5f3fc;
+  --modal-desc: #c084fc;
+  --modal-border: #3b2263;
+}
+
+[data-theme="maridia"] {
+  --bg-color: #051d2d;
+  --text-color: #2dd4bf;
+  
+  --default-cell-bg-color: #092c42;
+  --default-cell-border-color: #114c70;
+  --default-cell-text-color: #2dd4bf;
+  
+  --correct-cell-bg-color: #0ea5e9;
   --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #334155;
   
-  --key-default-bg: #334155;
-  --key-default-hover-bg: #475569;
-  --key-default-active-bg: #1e293b;
-  --key-default-text: #f8fafc;
+  --key-default-bg: #0f4466;
+  --key-default-hover-bg: #185b87;
+  --key-default-active-bg: #0a2d45;
+  --key-default-text: #2dd4bf;
   
-  --key-correct-bg: #22c55e;
+  --key-correct-bg: #0ea5e9;
   --key-present-bg: #eab308;
   --key-absent-bg: #334155;
   --key-state-text: #ffffff;
 
-  --modal-bg: #1e293b;
-  --modal-text: #f8fafc;
-  --modal-desc: #94a3b8;
-  --modal-border: #334155;
+  --modal-bg: #092c42;
+  --modal-text: #2dd4bf;
+  --modal-desc: #38bdf8;
+  --modal-border: #114c70;
 }
 
-[data-theme="nord"] {
-  --bg-color: #2e3440;
-  --text-color: #eceff4;
+[data-theme="tourian"] {
+  --bg-color: #081012;
+  --text-color: #22c55e;
   
-  --default-cell-bg-color: #2e3440;
-  --default-cell-border-color: #4c566a;
-  --default-cell-text-color: #eceff4;
+  --default-cell-bg-color: #0d1d21;
+  --default-cell-border-color: #1d3d45;
+  --default-cell-text-color: #22c55e;
   
-  --correct-cell-bg-color: #88c0d0;
-  --present-cell-bg-color: #ebcb8b;
-  --absent-cell-bg-color: #4c566a;
+  --correct-cell-bg-color: #22c55e;
+  --present-cell-bg-color: #ef4444;
+  --absent-cell-bg-color: #374151;
   
-  --key-default-bg: #3b4252;
-  --key-default-hover-bg: #434c5e;
-  --key-default-active-bg: #2e3440;
-  --key-default-text: #eceff4;
+  --key-default-bg: #142b30;
+  --key-default-hover-bg: #20454d;
+  --key-default-active-bg: #0b1a1c;
+  --key-default-text: #22c55e;
   
-  --key-correct-bg: #88c0d0;
-  --key-present-bg: #ebcb8b;
-  --key-absent-bg: #4c566a;
-  --key-state-text: #2e3440;
+  --key-correct-bg: #22c55e;
+  --key-present-bg: #ef4444;
+  --key-absent-bg: #374151;
+  --key-state-text: #ffffff;
 
-  --modal-bg: #2b313c;
-  --modal-text: #eceff4;
-  --modal-desc: #d8dee9;
-  --modal-border: #4c566a;
-}
-
-[data-theme="dracula"] {
-  --bg-color: #1e1f29;
-  --text-color: #f8f8f2;
-  
-  --default-cell-bg-color: #1e1f29;
-  --default-cell-border-color: #44475a;
-  --default-cell-text-color: #f8f8f2;
-  
-  --correct-cell-bg-color: #50fa7b;
-  --present-cell-bg-color: #f1fa8c;
-  --absent-cell-bg-color: #6272a4;
-  
-  --key-default-bg: #282a36;
-  --key-default-hover-bg: #44475a;
-  --key-default-active-bg: #1e1f29;
-  --key-default-text: #f8f8f2;
-  
-  --key-correct-bg: #50fa7b;
-  --key-present-bg: #f1fa8c;
-  --key-absent-bg: #6272a4;
-  --key-state-text: #282a36;
-
-  --modal-bg: #282a36;
-  --modal-text: #f8f8f2;
-  --modal-desc: #6272a4;
-  --modal-border: #44475a;
-}
-
-[data-theme="sepia"] {
-  --bg-color: #f4ecd8;
-  --text-color: #433422;
-  
-  --default-cell-bg-color: #f4ecd8;
-  --default-cell-border-color: #e4d7ba;
-  --default-cell-text-color: #433422;
-  
-  --correct-cell-bg-color: #859900;
-  --present-cell-bg-color: #b58900;
-  --absent-cell-bg-color: #93a1a1;
-  
-  --key-default-bg: #ebdcb9;
-  --key-default-hover-bg: #e4d5b2;
-  --key-default-active-bg: #d5c6a3;
-  --key-default-text: #433422;
-  
-  --key-correct-bg: #859900;
-  --key-present-bg: #b58900;
-  --key-absent-bg: #93a1a1;
-  --key-state-text: #f4ecd8;
-
-  --modal-bg: #fdf6e3;
-  --modal-text: #433422;
-  --modal-desc: #85705a;
-  --modal-border: #e4d7ba;
+  --modal-bg: #0d1d21;
+  --modal-text: #22c55e;
+  --modal-desc: #34d399;
+  --modal-border: #1d3d45;
 }
 
 .cell-fill-animation {

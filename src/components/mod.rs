@@ -39,7 +39,6 @@ pub mod modal_base;
 pub mod modal_date_picker;
 pub mod modal_info;
 pub mod modal_migrate;
-pub mod modal_settings;
 pub mod modal_stats;
 
 // Re-export major modal components for cleaner usage in other modules.
@@ -48,5 +47,4 @@ pub use modal_base::BaseModal;
 pub use modal_date_picker::DatePickerModal;
 pub use modal_info::InfoModal;
 pub use modal_migrate::MigrateStatsModal;
-pub use modal_settings::SettingsModal;
 pub use modal_stats::StatsModal;
