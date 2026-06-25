@@ -43,4 +43,6 @@ USER 99:100
 
 EXPOSE 4409
 ENV PORT=4409
+ENV NODE_ENV=production
+ENV LOG_DIR=/app/log
 CMD ["/app/server"]
