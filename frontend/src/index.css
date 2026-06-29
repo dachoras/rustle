@@ -213,19 +213,30 @@ svg.cursor-pointer:hover {
   animation-duration: var(--animation-speed-fast);
 }
 
-.navbar {
-  margin-bottom: 2%;
-}
-
-.navbar-content {
+.header-center-toolbar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
-  height: 3rem;
   align-items: center;
-  justify-content: space-between;
+  gap: 1.5rem;
+  z-index: 101;
 }
 
-.right-icons {
-  display: flex;
+@media (max-width: 768px) {
+  .header-center-toolbar {
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
+    justify-content: center;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+    gap: 1.5rem;
+  }
 }
 
 @keyframes revealAbsentCharCell {
