@@ -178,6 +178,40 @@ pub fn get_correct_word_message(lang: Language, solution: &str) -> String {
                     "Maybe stick to four-letter words? The word was {}.",
                     solution
                 ),
+                format!("The dictionary wins this round! The word was {}.", solution),
+                format!("System overload! The word was {}.", solution),
+                format!("Close, but no cigar. The word was {}.", solution),
+                format!(
+                    "You fought the word, and the word won. It was {}.",
+                    solution
+                ),
+                format!(
+                    "Maybe try spelling it backwards next time? The word was {}.",
+                    solution
+                ),
+                format!(
+                    "Better luck in your next incarnation. The word was {}.",
+                    solution
+                ),
+                format!(
+                    "The letters just didn't love you today. The word was {}.",
+                    solution
+                ),
+                format!(
+                    "A valiant effort, but fate had other plans. It was {}.",
+                    solution
+                ),
+                format!("A dictionary fell on you. The word was {}.", solution),
+                format!("Task failed successfully. The word was {}.", solution),
+                format!(
+                    "Almost had it! But almost doesn't save statistics. It was {}.",
+                    solution
+                ),
+                format!("Your guess streak ended here. The word was {}.", solution),
+                format!(
+                    "Game over. Insert coin to try again. The word was {}.",
+                    solution
+                ),
             ];
             let idx = (js_sys::Math::random() * taunts.len() as f64).floor() as usize;
             taunts[idx].clone()
