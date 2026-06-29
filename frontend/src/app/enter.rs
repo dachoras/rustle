@@ -95,16 +95,11 @@ pub fn build_on_enter(
             ));
 
             let win_messages = i18n.translations.win_messages;
-            let win_message = win_messages
-                [js_sys::Math::floor(js_sys::Math::random() * win_messages.len() as f64) as usize];
+            let win_message = get_seasonal_win_message(&state.theme, win_messages);
             let state_won = state.clone();
             let show_alert_clone = show_alert.clone();
             gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * sol_len as u32, move || {
-                show_alert_clone.emit((
-                    win_message.to_string(),
-                    "success".to_string(),
-                    ALERT_TIME_MS,
-                ));
+                show_alert_clone.emit((win_message, "success".to_string(), ALERT_TIME_MS));
                 state_won.dispatch(Action::SetStatsOpen(true));
                 state_won.dispatch(Action::SetEffectsActive(true));
             })
@@ -122,11 +117,104 @@ pub fn build_on_enter(
             let show_alert_clone = show_alert.clone();
             let i18n_clone = i18n.clone();
             gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * (sol_len as u32 + 1), move || {
-                let msg = crate::i18n::get_correct_word_message(i18n_clone.language, solution);
+                let default_msg =
+                    crate::i18n::get_correct_word_message(i18n_clone.language, solution);
+                let msg = get_seasonal_loss_message(&state_lost.theme, solution, default_msg);
                 show_alert_clone.emit((msg, "error".to_string(), LONG_ALERT_TIME_MS));
                 state_lost.dispatch(Action::SetStatsOpen(true));
             })
             .forget();
         }
     })
+}
+
+fn get_seasonal_win_message(theme: &str, default_messages: &[&str]) -> String {
+    let list: &[&str] = match theme {
+        "christmas" => &[
+            "Merry Christmas! Santa is proud of you!",
+            "Present obtained! Mission complete.",
+            "Holiday cheer level critical!",
+        ],
+        "halloween" => &[
+            "Spooky win! No tricks, just treats!",
+            "Zebes ghost busted!",
+            "Ghoulish intelligence unlocked!",
+        ],
+        "easter" => &[
+            "Easter Egg found! Great job!",
+            "Egg-cellent work!",
+            "Hop to victory!",
+        ],
+        "thanksgiving" => &[
+            "Thanksgiving feast obtained!",
+            "Stuffed with victory!",
+            "Feast complete: Zebes is grateful!",
+        ],
+        "newyear" => &[
+            "Happy New Year! Resolution complete.",
+            "Starting the year with a win!",
+            "Fireworks activated!",
+        ],
+        "valentine" => &[
+            "Heart container obtained!",
+            "Cupid Samus strikes again!",
+            "Love is in the air on Zebes!",
+        ],
+        "independence" => &[
+            "Liberty and victory for all!",
+            "Fireworks sequence initiated!",
+            "Independence Day speedrun!",
+        ],
+        "stpatrick" => &[
+            "Lir's treasure obtained! Luck of the Chozo.",
+            "Irish eyes are smiling on Zebes!",
+            "Pot of gold found!",
+        ],
+        _ => default_messages,
+    };
+    let idx = (js_sys::Math::random() * list.len() as f64).floor() as usize;
+    list[idx].to_string()
+}
+
+fn get_seasonal_loss_message(theme: &str, solution: &str, default_msg: String) -> String {
+    let list: Vec<String> = match theme {
+        "christmas" => vec![
+            format!("You got coal! The word was {}.", solution),
+            format!("Grinch stole the victory! The word was {}.", solution),
+        ],
+        "halloween" => vec![
+            format!("Ridley haunted your dreams! The word was {}.", solution),
+            format!("Spooked out of guesses! The word was {}.", solution),
+        ],
+        "easter" => vec![
+            format!("Egg cracked! The word was {}.", solution),
+            format!(
+                "Ridley stole your Easter basket! The word was {}.",
+                solution
+            ),
+        ],
+        "thanksgiving" => vec![
+            format!("You got carved! The word was {}.", solution),
+            format!("Ridley ate the turkey! The word was {}.", solution),
+        ],
+        "newyear" => vec![
+            format!("Time ran out on the countdown! The word was {}.", solution),
+            format!("Ridley crashed the party! The word was {}.", solution),
+        ],
+        "valentine" => vec![
+            format!("Heartbroken! The word was {}.", solution),
+            format!("Ridley broke your heart! The word was {}.", solution),
+        ],
+        "independence" => vec![
+            format!("Fireworks fizzled! The word was {}.", solution),
+            format!("Metroid independence denied! The word was {}.", solution),
+        ],
+        "stpatrick" => vec![
+            format!("Out of luck! The word was {}.", solution),
+            format!("Ridley stole your shamrock! The word was {}.", solution),
+        ],
+        _ => return default_msg,
+    };
+    let idx = (js_sys::Math::random() * list.len() as f64).floor() as usize;
+    list[idx].clone()
 }
