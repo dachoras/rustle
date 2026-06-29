@@ -183,27 +183,27 @@ pub fn get_intermediate_feedback(theme: &str, total_matches: usize) -> String {
         _ => {
             if total_matches == 0 {
                 &[
-                    "Absolute zero. Even Ridley felt that.",
-                    "Are you playing blindfolded?",
-                    "0 matches. Time to check visor settings.",
+                    "Oof, absolute zero. Are you playing blindfolded?",
                     "A swing and a complete miss.",
-                    "No signal. Is your keyboard plugged in?",
+                    "Is your keyboard even plugged in?",
+                    "Not a single letter. Impressively bad!",
+                    "Error 404: Correct letters not found.",
                 ]
             } else if total_matches <= 2 {
                 &[
-                    "Not terrible, but Ridley is still laughing.",
-                    "Scanning... low energy detected.",
-                    "A minor upgrade, but we need more power.",
+                    "Not terrible, but let's not write home about it.",
                     "At least it's not zero!",
-                    "Keep scanning, Space Hunter.",
+                    "A small step, but we need a giant leap.",
+                    "You're warmed up, now make a real guess.",
+                    "Slight progress detected. Keep going.",
                 ]
             } else {
                 &[
-                    "Now we're cookin' with plasma!",
-                    "Energy tank refilled!",
-                    "Samus is nodding in approval.",
-                    "Calculations: highly logical.",
-                    "Visor scanning reveals... hope!",
+                    "Now we're cookin'!",
+                    "Highly logical guess!",
+                    "So close you can almost taste the victory.",
+                    "Great deduction! You're on fire.",
+                    "Victory is within reach!",
                 ]
             }
         }
