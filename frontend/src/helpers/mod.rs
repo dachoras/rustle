@@ -32,6 +32,7 @@
 
 pub mod browser;
 pub mod encryption;
+pub mod feedback;
 pub mod holidays;
 pub mod local_storage;
 pub mod share;

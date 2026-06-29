@@ -124,6 +124,25 @@ pub fn build_on_enter(
                 state_lost.dispatch(Action::SetStatsOpen(true));
             })
             .forget();
+        } else {
+            let statuses = crate::helpers::statuses::get_guess_statuses(solution, &word);
+            let correct = statuses
+                .iter()
+                .filter(|&&s| s == crate::helpers::statuses::CharStatus::Correct)
+                .count();
+            let present = statuses
+                .iter()
+                .filter(|&&s| s == crate::helpers::statuses::CharStatus::Present)
+                .count();
+            let total_matches = correct + present;
+
+            let feedback_msg =
+                crate::helpers::feedback::get_intermediate_feedback(&state.theme, total_matches);
+            let show_alert_clone = show_alert.clone();
+            gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * sol_len as u32, move || {
+                show_alert_clone.emit((feedback_msg, "info".to_string(), ALERT_TIME_MS));
+            })
+            .forget();
         }
     })
 }
