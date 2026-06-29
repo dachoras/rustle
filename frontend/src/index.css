@@ -12,8 +12,8 @@
   --default-cell-border-color: #42385a;
   --default-cell-text-color: #d3cce3;
   
-  --correct-cell-bg-color: #3b82f6;
-  --present-cell-bg-color: #a855f7;
+  --correct-cell-bg-color: #10b981;
+  --present-cell-bg-color: #f59e0b;
   --absent-cell-bg-color: #4b5563;
   
   --key-default-bg: #524775;
@@ -21,8 +21,8 @@
   --key-default-active-bg: #3d335c;
   --key-default-text: #ffffff;
   
-  --key-correct-bg: #3b82f6;
-  --key-present-bg: #a855f7;
+  --key-correct-bg: #10b981;
+  --key-present-bg: #f59e0b;
   --key-absent-bg: #1a222e;
   --key-state-text: #ffffff;
 
@@ -68,7 +68,7 @@
   --default-cell-border-color: #5c1305;
   --default-cell-text-color: #fde047;
   
-  --correct-cell-bg-color: #ef4444;
+  --correct-cell-bg-color: #a3e635;
   --present-cell-bg-color: #f97316;
   --absent-cell-bg-color: #450a0a;
   
@@ -77,7 +77,7 @@
   --key-default-active-bg: #6b2114;
   --key-default-text: #ffffff;
   
-  --key-correct-bg: #ef4444;
+  --key-correct-bg: #a3e635;
   --key-present-bg: #f97316;
   --key-absent-bg: #210a07;
   --key-state-text: #ffffff;
@@ -96,8 +96,8 @@
   --default-cell-border-color: #3b2263;
   --default-cell-text-color: #a5f3fc;
   
-  --correct-cell-bg-color: #06b6d4;
-  --present-cell-bg-color: #d946ef;
+  --correct-cell-bg-color: #2dd4bf;
+  --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #475569;
   
   --key-default-bg: #4c3078;
@@ -105,8 +105,8 @@
   --key-default-active-bg: #382359;
   --key-default-text: #ffffff;
   
-  --key-correct-bg: #06b6d4;
-  --key-present-bg: #d946ef;
+  --key-correct-bg: #2dd4bf;
+  --key-present-bg: #eab308;
   --key-absent-bg: #140e21;
   --key-state-text: #ffffff;
 
@@ -124,7 +124,7 @@
   --default-cell-border-color: #114c70;
   --default-cell-text-color: #2dd4bf;
   
-  --correct-cell-bg-color: #0ea5e9;
+  --correct-cell-bg-color: #14b8a6;
   --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #334155;
   
@@ -133,7 +133,7 @@
   --key-default-active-bg: #13537a;
   --key-default-text: #ffffff;
   
-  --key-correct-bg: #0ea5e9;
+  --key-correct-bg: #14b8a6;
   --key-present-bg: #eab308;
   --key-absent-bg: #0a1121;
   --key-state-text: #ffffff;
@@ -153,7 +153,7 @@
   --default-cell-text-color: #22c55e;
   
   --correct-cell-bg-color: #22c55e;
-  --present-cell-bg-color: #ef4444;
+  --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #374151;
   
   --key-default-bg: #2e5c66;
@@ -162,7 +162,7 @@
   --key-default-text: #ffffff;
   
   --key-correct-bg: #22c55e;
-  --key-present-bg: #ef4444;
+  --key-present-bg: #eab308;
   --key-absent-bg: #0f2118;
   --key-state-text: #ffffff;
 
@@ -674,14 +674,14 @@ header {
   --default-cell-bg-color: #112d20;
   --default-cell-border-color: #2b5c46;
   --default-cell-text-color: #e2f5ee;
-  --correct-cell-bg-color: #ef4444;
+  --correct-cell-bg-color: #16a34a;
   --present-cell-bg-color: #f59e0b;
   --absent-cell-bg-color: #374151;
   --key-default-bg: #367358;
   --key-default-hover-bg: #4a9674;
   --key-default-active-bg: #285540;
   --key-default-text: #ffffff;
-  --key-correct-bg: #ef4444;
+  --key-correct-bg: #16a34a;
   --key-present-bg: #f59e0b;
   --key-absent-bg: #0f2118;
   --key-state-text: #ffffff;
@@ -697,15 +697,15 @@ header {
   --default-cell-bg-color: #150f24;
   --default-cell-border-color: #3d2c61;
   --default-cell-text-color: #f7ebff;
-  --correct-cell-bg-color: #f97316;
-  --present-cell-bg-color: #a855f7;
+  --correct-cell-bg-color: #84cc16;
+  --present-cell-bg-color: #f97316;
   --absent-cell-bg-color: #2e2838;
   --key-default-bg: #4d3b75;
   --key-default-hover-bg: #665196;
   --key-default-active-bg: #382a57;
   --key-default-text: #ffffff;
-  --key-correct-bg: #f97316;
-  --key-present-bg: #a855f7;
+  --key-correct-bg: #84cc16;
+  --key-present-bg: #f97316;
   --key-absent-bg: #120e1c;
   --key-state-text: #ffffff;
   --modal-bg: #150f24;
@@ -720,15 +720,15 @@ header {
   --default-cell-bg-color: #1e2836;
   --default-cell-border-color: #3b4e6b;
   --default-cell-text-color: #e5f2ff;
-  --correct-cell-bg-color: #f472b6;
-  --present-cell-bg-color: #38bdf8;
+  --correct-cell-bg-color: #86efac;
+  --present-cell-bg-color: #fde047;
   --absent-cell-bg-color: #4b5563;
   --key-default-bg: #526a8c;
   --key-default-hover-bg: #6c86ab;
   --key-default-active-bg: #3f506b;
   --key-default-text: #ffffff;
-  --key-correct-bg: #f472b6;
-  --key-present-bg: #38bdf8;
+  --key-correct-bg: #86efac;
+  --key-present-bg: #fde047;
   --key-absent-bg: #1a222e;
   --key-state-text: #ffffff;
   --modal-bg: #1e2836;
@@ -743,15 +743,15 @@ header {
   --default-cell-bg-color: #2c1a11;
   --default-cell-border-color: #5c3b28;
   --default-cell-text-color: #faebd7;
-  --correct-cell-bg-color: #ca8a04;
-  --present-cell-bg-color: #d97706;
+  --correct-cell-bg-color: #4ade80;
+  --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #4b3d35;
   --key-default-bg: #734c38;
   --key-default-hover-bg: #94654b;
   --key-default-active-bg: #57392a;
   --key-default-text: #ffffff;
-  --key-correct-bg: #ca8a04;
-  --key-present-bg: #d97706;
+  --key-correct-bg: #4ade80;
+  --key-present-bg: #eab308;
   --key-absent-bg: #241610;
   --key-state-text: #ffffff;
   --modal-bg: #2c1a11;
@@ -766,15 +766,15 @@ header {
   --default-cell-bg-color: #101221;
   --default-cell-border-color: #2c3157;
   --default-cell-text-color: #f1f3f7;
-  --correct-cell-bg-color: #eab308;
-  --present-cell-bg-color: #94a3b8;
+  --correct-cell-bg-color: #10b981;
+  --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #2e303d;
   --key-default-bg: #3a416b;
   --key-default-hover-bg: #4f578c;
   --key-default-active-bg: #2c3254;
   --key-default-text: #ffffff;
-  --key-correct-bg: #eab308;
-  --key-present-bg: #94a3b8;
+  --key-correct-bg: #10b981;
+  --key-present-bg: #eab308;
   --key-absent-bg: #0a0c14;
   --key-state-text: #ffffff;
   --modal-bg: #101221;
@@ -789,15 +789,15 @@ header {
   --default-cell-bg-color: #30141f;
   --default-cell-border-color: #632d43;
   --default-cell-text-color: #ffe6ed;
-  --correct-cell-bg-color: #f43f5e;
-  --present-cell-bg-color: #ec4899;
+  --correct-cell-bg-color: #4ade80;
+  --present-cell-bg-color: #fcd34d;
   --absent-cell-bg-color: #4b2332;
   --key-default-bg: #7c3b57;
   --key-default-hover-bg: #9c4c70;
   --key-default-active-bg: #5e2c42;
   --key-default-text: #ffffff;
-  --key-correct-bg: #f43f5e;
-  --key-present-bg: #ec4899;
+  --key-correct-bg: #4ade80;
+  --key-present-bg: #fcd34d;
   --key-absent-bg: #240d16;
   --key-state-text: #ffffff;
   --modal-bg: #30141f;
@@ -835,15 +835,15 @@ header {
   --default-cell-bg-color: #0f182e;
   --default-cell-border-color: #2b3b5c;
   --default-cell-text-color: #f1f5f9;
-  --correct-cell-bg-color: #ef4444;
-  --present-cell-bg-color: #3b82f6;
+  --correct-cell-bg-color: #10b981;
+  --present-cell-bg-color: #eab308;
   --absent-cell-bg-color: #334155;
   --key-default-bg: #3e4e7c;
   --key-default-hover-bg: #5469a3;
   --key-default-active-bg: #2f3c61;
   --key-default-text: #ffffff;
-  --key-correct-bg: #ef4444;
-  --key-present-bg: #3b82f6;
+  --key-correct-bg: #10b981;
+  --key-present-bg: #eab308;
   --key-absent-bg: #0a1121;
   --key-state-text: #ffffff;
   --modal-bg: #0f182e;
