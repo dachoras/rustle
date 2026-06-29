@@ -24,13 +24,12 @@ pub mod callbacks;
 
 use crate::app_effects::use_app_effects;
 use crate::app_state::{Action, AppState};
-use crate::components::alerts::Alert;
 use crate::components::app_modals::AppModals;
 use crate::components::grid::Grid;
 use crate::components::keyboard::Keyboard;
 use crate::components::WeatherContainer;
 use crate::constants::config::*;
-use shared_frontend::Header;
+use shared_frontend::{Header, Footer};
 use yew::prelude::*;
 
 #[function_component(App)]
@@ -207,7 +206,6 @@ pub fn app() -> Html {
                         </button>
                     </div>
                 </div>
-                <Alert message={state.alert_msg.clone()} is_visible={state.alert_visible} variant={state.alert_variant.clone()} />
                 <div class="mx-auto flex w-full max-w-7xl flex-grow flex-col px-1 py-1 sm:py-2 sm:px-6 lg:px-8">
                     <Grid solution={solution} guesses={state.guesses.clone()} current_guess={state.current_guess.clone()} is_revealing={state.is_revealing} current_row_class_name={state.jiggle_class.clone()} />
                     <div class="my-auto w-full">
@@ -215,6 +213,26 @@ pub fn app() -> Html {
                     </div>
                 </div>
                 <AppModals state={state.clone()} solution={solution} solution_index={solution_index} tomorrow={tomorrow} is_latest_game={is_latest_game} show_alert={show_alert} />
+                <Footer
+                    show_version={true}
+                    version={env!("CARGO_PKG_VERSION").to_string()}
+                    show_github={true}
+                    github_url={Some("https://github.com/UberMetroid/rustle".to_string())}
+                    version_url={Some(format!("https://github.com/UberMetroid/rustle/releases/tag/v{}", env!("CARGO_PKG_VERSION")))}
+                >
+                    {
+                        if state.alert_visible && !state.alert_msg.is_empty() {
+                            let cls = match state.alert_variant.as_str() {
+                                "success" => "success",
+                                "error" => "danger",
+                                _ => "info",
+                            };
+                            html! { <div class={format!("footer-status-text {}", cls)}>{ &state.alert_msg }</div> }
+                        } else {
+                            html! { <div class="footer-status-text success">{"Ready"}</div> }
+                        }
+                    }
+                </Footer>
             </div>
         </ContextProvider<crate::i18n::I18nContext>>
     }

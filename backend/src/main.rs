@@ -120,8 +120,8 @@ async fn main() {
         .unwrap_or(true);
 
     let enable_print = std::env::var("ENABLE_PRINT")
-        .map(|v| v != "false" && v != "off")
-        .unwrap_or(true);
+        .map(|v| v == "true" || v == "on")
+        .unwrap_or(false);
 
     let app_state = AppState {
         pin,
