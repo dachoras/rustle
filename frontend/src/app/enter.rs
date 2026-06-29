@@ -137,7 +137,7 @@ pub fn build_on_enter(
             let total_matches = correct + present;
 
             let feedback_msg =
-                crate::helpers::feedback::get_intermediate_feedback(&state.theme, total_matches);
+                crate::helpers::feedback::get_intermediate_comment(&state.theme, total_matches);
             let show_alert_clone = show_alert.clone();
             gloo_timers::callback::Timeout::new(REVEAL_TIME_MS * sol_len as u32, move || {
                 show_alert_clone.emit((feedback_msg, "info".to_string(), ALERT_TIME_MS));
