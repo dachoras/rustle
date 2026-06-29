@@ -7,7 +7,15 @@ use crate::i18n::Translations;
 pub fn translations() -> Translations {
     Translations {
         game_title: "Rustle",
-        win_messages: &["Great Job!", "Awesome", "Well done!"],
+        win_messages: &[
+            "See you next mission!",
+            "Mission Complete: Zebes Saved!",
+            "Speedrun tier! Samus is impressed.",
+            "Chozo technology fully unlocked!",
+            "Gravity Suit obtained!",
+            "Ridley defeated!",
+            "Mother Brain destroyed!",
+        ],
         game_copied: "Game copied to clipboard",
         not_enough_letters: "Not enough letters",
         word_not_found: "Word not found",

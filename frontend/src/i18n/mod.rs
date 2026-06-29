@@ -163,6 +163,16 @@ pub fn get_correct_word_message(lang: Language, solution: &str) -> String {
         Language::French => format!("Le mot était {}", solution),
         Language::Portuguese => format!("A palavra era {}", solution),
         Language::Russian => format!("Слово было {}", solution),
-        _ => format!("The word was {}", solution),
+        _ => {
+            let taunts = &[
+                format!("Metroid energy depleted! The word was {}.", solution),
+                format!("Ridley vaporized you! The word was {}.", solution),
+                format!("Mother Brain laughed. The word was {}.", solution),
+                format!("Samus's suit exploded! The word was {}.", solution),
+                format!("You got lost in Norfair! The word was {}.", solution),
+            ];
+            let idx = (js_sys::Math::random() * taunts.len() as f64).floor() as usize;
+            taunts[idx].clone()
+        }
     }
 }
