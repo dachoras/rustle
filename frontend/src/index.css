@@ -491,12 +491,32 @@ body {
   border-color: var(--default-cell-border-color) !important;
 }
 
+/* Header margin and grid top-margin overrides to save vertical space on short viewports */
+header {
+  margin-bottom: min(3dvh, 1.5rem) !important;
+}
+
+#game-grid {
+  margin-top: min(2dvh, 0.5rem) !important;
+}
+
 /* Grid Cell styling */
 .cell {
+  width: min(7.2dvh, 13vw);
+  height: min(7.2dvh, 13vw);
+  max-width: 58px;
+  max-height: 58px;
   background-color: var(--default-cell-bg-color) !important;
   border-color: var(--default-cell-border-color) !important;
   color: var(--default-cell-text-color) !important;
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.125rem;
+  font-weight: 700;
+  border-radius: 4px;
+  font-size: min(3.8dvh, 1.75rem);
 }
 
 .cell-filled {
@@ -523,7 +543,29 @@ body {
 
 /* Keyboard Key styling */
 .key-btn {
-  transition: all 0.2s ease-in-out;
+  height: min(5.8dvh, 12vw);
+  max-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  margin: 0 1.5px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  font-size: min(2.2dvh, 1rem);
+}
+
+.key-btn.regular-key {
+  width: min(4.8dvh, 9vw);
+  max-width: 46px;
+}
+
+.key-btn.special-key {
+  width: min(8dvh, 15vw);
+  max-width: 70px;
+  font-size: min(1.8dvh, 0.75rem);
 }
 
 .key-default {
