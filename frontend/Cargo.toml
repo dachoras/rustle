@@ -1,6 +1,6 @@
 [package]
 name = "rustle-frontend"
-version = "0.1.29"
+version = "0.1.30"
 edition = "2021"
 authors = ["UberMetroid"]
 license = "GPL-3.0-only"

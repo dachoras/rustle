@@ -102,6 +102,9 @@ async fn main() {
         .unwrap_or_else(|_| "Rustle".to_string());
 
     // 4. PIN
+    #[cfg(debug_assertions)]
+    let pin = None;
+    #[cfg(not(debug_assertions))]
     let pin = std::env::var("RUSTLE_PIN")
         .or_else(|_| std::env::var("PIN"))
         .ok()
