@@ -1115,3 +1115,44 @@ header {
     background-color: var(--key-default-hover-bg);
 }
 
+/* Mobile layout overrides: Keep header & footer compact and row-based */
+@media (max-width: 768px) {
+  header {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    height: 3.25rem !important;
+    padding: 0 1rem !important;
+    gap: 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  #header-title {
+    display: block !important;
+  }
+  #header-title h1 {
+    font-size: 1.25rem !important;
+  }
+  .header-right {
+    width: auto !important;
+    justify-content: flex-end !important;
+  }
+  footer.layout-footer {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    flex-direction: row !important;
+    height: 3.5rem !important;
+    min-height: unset !important;
+    padding: 0.5rem 1rem !important;
+    gap: 0 !important;
+  }
+  .footer-left {
+    justify-self: start !important;
+  }
+  .footer-center {
+    justify-self: center !important;
+  }
+  .footer-right {
+    justify-self: end !important;
+  }
+}
+
+
