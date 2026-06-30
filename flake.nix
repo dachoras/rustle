@@ -75,6 +75,7 @@
             WorkingDir = "/app";
             Env = [
               "PORT=4409"
+              "RUNNING_IN_DOCKER=true"
             ];
             ExposedPorts = {
               "4409/tcp" = {};

@@ -43,6 +43,7 @@ USER 99:100
 
 EXPOSE 4409
 ENV PORT=4409
+ENV RUNNING_IN_DOCKER=true
 ENV NODE_ENV=production
 ENV LOG_DIR=/app/log
 CMD ["/app/server"]

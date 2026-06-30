@@ -102,15 +102,19 @@ async fn main() {
         .unwrap_or_else(|_| "Rustle".to_string());
 
     // 4. PIN
-    #[cfg(debug_assertions)]
-    let pin = None;
-    #[cfg(not(debug_assertions))]
-    let pin = std::env::var("RUSTLE_PIN")
-        .or_else(|_| std::env::var("PIN"))
-        .ok()
-        .filter(|p| {
-            !p.is_empty() && p.chars().all(|c| c.is_ascii_digit()) && p.len() >= 4 && p.len() <= 10
-        });
+    let is_container = std::env::var("RUNNING_IN_DOCKER").ok().map(|v| v == "true").unwrap_or(false)
+        || std::path::Path::new("/.dockerenv").exists();
+
+    let pin = if is_container {
+        std::env::var("RUSTLE_PIN")
+            .or_else(|_| std::env::var("PIN"))
+            .ok()
+            .filter(|p| {
+                !p.is_empty() && p.chars().all(|c| c.is_ascii_digit()) && p.len() >= 4 && p.len() <= 10
+            })
+    } else {
+        None
+    };
 
     let enable_translation = std::env::var("ENABLE_TRANSLATION")
         .map(|v| v == "true" || v == "on")
