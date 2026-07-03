@@ -56,13 +56,14 @@
             trunk build --release
             cd ..
             # Build backend server binary
-            cargo build --release --bin server
+            cargo build --release --bin server --bin sh
           '';
 
           installPhase = ''
             mkdir -p $out/bin
             mkdir -p $out/dist
             cp target/release/server $out/bin/server
+            cp target/release/sh $out/bin/sh
             cp -r frontend/dist/* $out/dist/
           '';
         };
@@ -88,6 +89,9 @@
           extraCommands = ''
             mkdir -p app
             cp -r ${app}/dist app/dist
+            mkdir -p bin
+            cp ${app}/bin/sh bin/sh
+            cp ${app}/bin/sh bin/bash
           '';
         };
 

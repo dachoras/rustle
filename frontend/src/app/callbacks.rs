@@ -13,22 +13,27 @@ use yew::prelude::*;
 
 pub fn build_on_theme_click(
     state: UseReducerHandle<AppState>,
-    enable_themes: UseStateHandle<bool>,
+    enable_themes: bool,
 ) -> Callback<MouseEvent> {
     Callback::from(move |_| {
-        if !*enable_themes {
+        if !enable_themes {
             return;
         }
         let date = crate::helpers::words::get_game_date();
-        if crate::helpers::holidays::get_holiday_for_date(date).is_some() {
-            return;
-        }
+        let holiday_prefix = crate::helpers::holidays::get_holiday_for_date(date).map(|(p, _)| p);
         let next_theme = match state.theme.as_str() {
             "crateria" => "brinstar".to_string(),
             "brinstar" => "norfair".to_string(),
             "norfair" => "wrecked_ship".to_string(),
             "wrecked_ship" => "maridia".to_string(),
             "maridia" => "tourian".to_string(),
+            "tourian" => {
+                if let Some(prefix) = holiday_prefix {
+                    prefix.to_string()
+                } else {
+                    "crateria".to_string()
+                }
+            }
             _ => "crateria".to_string(),
         };
         state.dispatch(Action::SetTheme(next_theme.clone()));

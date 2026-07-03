@@ -146,7 +146,10 @@ pub fn app() -> Html {
         i18n_context.clone(),
     );
 
-    let on_theme_click = callbacks::build_on_theme_click(state.clone(), enable_themes.clone());
+    let is_holiday = crate::helpers::holidays::get_holiday_for_date(game_date).is_some();
+    let themes_allowed = *enable_themes && !is_holiday;
+
+    let on_theme_click = callbacks::build_on_theme_click(state.clone(), themes_allowed);
     let on_hard_mode_click = callbacks::build_on_hard_mode_click(state.clone(), show_alert.clone());
 
     html! {
@@ -170,7 +173,7 @@ pub fn app() -> Html {
                             Callback::from(move |_| on_logout.emit(()))
                         }
                         enable_translation={*enable_translation}
-                        enable_themes={*enable_themes}
+                        enable_themes={themes_allowed}
                         enable_print={false}
                         print_disabled={true}
                         on_print={None}
