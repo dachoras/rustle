@@ -1,67 +1,28 @@
-# Rustle - Wordle Clone in Rust & WebAssembly
+# Rustle - Word Guessing Game
 
 <p align="center">
-  <img src="frontend/public/favicon.png?v=0.1.28" alt="Rustle Logo" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/UberMetroid/unraid-templates/main/icons/rustle.png" alt="Rustle Logo" width="128" height="128">
 </p>
 
-Rustle is an optimized, responsive, and secure clone of the popular Wordle game built using Rust, Yew, and WebAssembly, served by a native Axum backend.
-
-## Features
-
-- **Standardized UI Alignment**: Completely integrated with `shared-assets` for a uniform theme engine, navigation header, footer, and authentication layout.
-- **Super Metroid Atmospheric Environments**: Selectable map location themes (Crateria, Brinstar, Norfair, Wrecked Ship, Maridia, Tourian) with custom color schemes and interactive ambient weather particle effects.
-- **Classic Gameplay Rules**: Standard Wordle guess validation, semantic green/yellow grid cell styling, high-contrast settings, and an optional hard-mode toggle.
-- **Secure PIN Access**: Optional lock screen gate with client IP rate-limiting, secure lockout memory tracking, and timing-attack protections.
-- **Extremely Lightweight**: Compiled down to an optimized WebAssembly bundle (~779KB) with zero runtime dependencies.
+Rustle is a clean, secure, and optimized word guessing game (Wordle clone) built in Rust and WebAssembly, served by a high-performance Axum backend.
 
 ---
 
-## Container Installation
+## Key Features
 
-### Option 1: Docker Compose (Recommended)
+*   **Standardized UI Alignment**: Completely integrated with `shared-assets` for a uniform theme engine, navigation header, footer, and authentication layout.
+*   **Super Metroid Atmospheric Environments**: Selectable map location themes (Crateria, Brinstar, Norfair, Wrecked Ship, Maridia, Tourian) with custom color schemes and interactive ambient weather particle effects.
+*   **Classic Gameplay Rules**: Standard Wordle guess validation, semantic green/yellow grid cell styling, high-contrast settings, and an optional hard-mode toggle.
+*   **Secure PIN Access**: Optional lock screen gate with client IP rate-limiting, timing-attack protections, and session cookie validation.
+*   **Performance First**: Tiny resource footprint, zero external JS engine dependencies, and rapid page load speeds.
 
-1. Create a `docker-compose.yml` file:
+---
 
-```yaml
-version: '3'
-services:
-  rustle:
-    image: ubermetroid/rustle:0.1.28
-    container_name: rustle
-    restart: unless-stopped
-    ports:
-      - 4502:4502
-    environment:
-      PORT: 4502
-      SITE_TITLE: Rustle
-      RUSTLE_PIN: "" # Optional Access PIN
-      BASE_URL: http://localhost:4502
-      ALLOWED_ORIGINS: "*"
-```
+## Container Registry
 
-2. Run the container:
+The Docker image is built with **Nix** (no Alpine, fully reproducible) and published to Docker Hub:
 
-```bash
-docker compose up -d
-```
-
-3. Open your browser and navigate to `http://localhost:4502`.
-
-### Option 2: Docker CLI
-
-Run the following command to start the container:
-
-```bash
-docker run -d \
-  --name rustle \
-  --restart unless-stopped \
-  -p 4502:4502 \
-  -e PORT=4502 \
-  -e SITE_TITLE=Rustle \
-  -e BASE_URL=http://localhost:4502 \
-  -e ALLOWED_ORIGINS="*" \
-  ubermetroid/rustle:0.1.28
-```
+*   **Docker Hub**: [ubermetroid/rustle](https://hub.docker.com/r/ubermetroid/rustle)
 
 ---
 
@@ -81,3 +42,10 @@ Configure these settings inside your Docker Compose environment or container env
 | `ENABLE_THEMES` | Enable the Super Metroid theme selector in the navigation header (true/false). | `true` |
 | `ENABLE_PRINT` | Enable the print button in the navigation header (true/false). | `false` |
 | `MAX_ATTEMPTS` | Number of failed PIN attempts permitted before locking out the user client IP address. | `5` |
+| `LOCKOUT_TIME_MINUTES` | Lockout duration in minutes for IPs exceeding `MAX_ATTEMPTS`. | `15` |
+| `COOKIE_MAX_AGE_HOURS` | Duration in hours that the user's PIN session cookie remains valid. | `24` |
+| `SHUTDOWN_DRAIN_SECONDS` | Seconds to wait for active connections to finish before shutting down. | `5` |
+| `SHOW_VERSION` | Display the application version number in the footer (true/false). | `true` |
+| `SHOW_GITHUB` | Display the GitHub repository link in the footer (true/false). | `true` |
+| `TRUST_PROXY` | Set `true` if backend is hosted behind a reverse proxy. | `false` |
+| `TRUSTED_PROXY_IPS` | Comma-separated IP/CIDR list of trusted upstream proxies. | None |
