@@ -6,7 +6,7 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     flake-utils.url = "github:numtide/flake-utils";
     shared-assets = {
-      url = "github:UberMetroid/shared-assets?ref=v3.0.3";
+      url = "github:UberMetroid/shared-assets?ref=v3.0.18";
       flake = false;
     };
   };
