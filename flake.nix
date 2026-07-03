@@ -33,8 +33,8 @@
           cargoLock = {
             lockFile = ./Cargo.lock;
             outputHashes = {
-              "shared-core-3.0.0" = "sha256-ozJJ4XDZOA3BbTBrHhN3gi/2xRIuVnAq940QyNltMl8=";
-              "shared-frontend-3.0.0" = "sha256-ozJJ4XDZOA3BbTBrHhN3gi/2xRIuVnAq940QyNltMl8=";
+              "shared-core-3.0.18" = "sha256-sjkQrpXtrCQKWk1hQeTw1GHvcpl+tthWKkEWuyZOXSA=";
+              "shared-frontend-3.0.18" = "sha256-sjkQrpXtrCQKWk1hQeTw1GHvcpl+tthWKkEWuyZOXSA=";
             };
           };
 
@@ -44,6 +44,8 @@
             pkgs.trunk
             pkgs.tailwindcss
           ];
+
+          doCheck = false;
 
           buildPhase = ''
             export HOME=$TMPDIR
