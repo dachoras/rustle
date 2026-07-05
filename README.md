@@ -1,15 +1,17 @@
-# Rustle - Word Guessing Game
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/UberMetroid/unraid-templates/main/icons/rustle.png" alt="Rustle Logo" width="128" height="128">
-</p>
+# Rustle — Word Guessing Game <img src="https://raw.githubusercontent.com/UberMetroid/unraid-templates/main/icons/rustle.png" width="48" height="48" alt="rustle logo" align="right">
 
 Rustle is a clean, secure, and optimized word guessing game (Wordle clone) built in Rust and WebAssembly, served by a high-performance Axum backend.
 
 ---
 
-## Key Features
+## 🏛️ Architecture & Stack
+*   **Frontend**: Yew (WASM)
+*   **Backend**: Axum (Rust) / Tokio
+*   **Deployment**: Nix-built Container / Unraid native / Docker Compose
 
+---
+
+## 🟢 Key Features
 *   **Standardized UI Alignment**: Completely integrated with `shared-assets` for a uniform theme engine, navigation header, footer, and authentication layout.
 *   **Super Metroid Atmospheric Environments**: Selectable map location themes (Crateria, Brinstar, Norfair, Wrecked Ship, Maridia, Tourian) with custom color schemes and interactive ambient weather particle effects.
 *   **Classic Gameplay Rules**: Standard Wordle guess validation, semantic green/yellow grid cell styling, high-contrast settings, and an optional hard-mode toggle.
@@ -18,34 +20,75 @@ Rustle is a clean, secure, and optimized word guessing game (Wordle clone) built
 
 ---
 
-## Container Registry
+## 💾 Deployment & Installation
 
-The Docker image is built with **Nix** (no Alpine, fully reproducible) and published to Docker Hub:
+### Docker Compose
+Create a `docker-compose.yml` file with the following service definition:
 
-*   **Docker Hub**: [ubermetroid/rustle](https://hub.docker.com/r/ubermetroid/rustle)
+```yaml
+services:
+  rustle:
+    image: ubermetroid/rustle:latest
+    container_name: rustle
+    restart: unless-stopped
+    ports:
+      - ${RUSTLE_PORT:-4502}:4502
+    environment:
+      PORT: 4502
+      SITE_TITLE: ${RUSTLE_SITE_TITLE:-Rustle}
+      RUSTLE_PIN: ${RUSTLE_PIN:-}
+      BASE_URL: ${RUSTLE_BASE_URL:-http://localhost:4502}
+      ALLOWED_ORIGINS: ${RUSTLE_ALLOWED_ORIGINS:-*}
+      TZ: ${TZ:-UTC}
+      ENABLE_TRANSLATION: ${ENABLE_TRANSLATION:-false}
+      MAX_ATTEMPTS: ${MAX_ATTEMPTS:-5}
+```
 
 ---
 
-## Configuration Options
+## ⚙️ Configuration Options
 
-Configure these settings inside your Docker Compose environment or container environment variables:
-
-| Variable | Description | Default |
+| Environment Variable | Description | Default |
 | :--- | :--- | :--- |
 | `PORT` | The port number the backend HTTP server will bind to inside the container. | `4502` |
 | `SITE_TITLE` | Custom website title rendered in navigation headers, browser tabs, and PWA manifest. | `Rustle` |
-| `BASE_URL` | Application base URL. Essential when deploying behind reverse proxies to ensure redirect and websocket links are resolved correctly. | `http://localhost:4502` |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed HTTP request origins (CORS filter). Use `*` to allow all origins. | `*` |
-| `RUSTLE_PIN` | Optional 4–10 digit PIN (numerical only) to lock access to the interface. Leave empty for public mode. | None |
+| `BASE_URL` | Application base URL. Essential when deploying behind reverse proxies. | `http://localhost:4502` |
+| `ALLOWED_ORIGINS` | Comma-separated list of allowed HTTP request origins (CORS filter). | `*` |
+| `RUSTLE_PIN` | Optional 4–10 digit numerical PIN to lock access to the interface. | None |
 | `TZ` | Timezone for the container processes and logs. | `UTC` |
-| `ENABLE_TRANSLATION` | Enable the multi-language / translation selector in the navigation header (true/false). | `false` |
-| `ENABLE_THEMES` | Enable the Super Metroid theme selector in the navigation header (true/false). | `true` |
-| `ENABLE_PRINT` | Enable the print button in the navigation header (true/false). | `false` |
-| `MAX_ATTEMPTS` | Number of failed PIN attempts permitted before locking out the user client IP address. | `5` |
+| `ENABLE_TRANSLATION` | Enable the multi-language / translation selector in the navigation header. | `false` |
+| `ENABLE_THEMES` | Enable the Super Metroid theme selector in the navigation header. | `true` |
+| `ENABLE_PRINT` | Enable the print button in the navigation header. | `false` |
+| `MAX_ATTEMPTS` | Number of failed PIN attempts permitted before rate lockout. | `5` |
 | `LOCKOUT_TIME_MINUTES` | Lockout duration in minutes for IPs exceeding `MAX_ATTEMPTS`. | `15` |
 | `COOKIE_MAX_AGE_HOURS` | Duration in hours that the user's PIN session cookie remains valid. | `24` |
 | `SHUTDOWN_DRAIN_SECONDS` | Seconds to wait for active connections to finish before shutting down. | `5` |
-| `SHOW_VERSION` | Display the application version number in the footer (true/false). | `true` |
-| `SHOW_GITHUB` | Display the GitHub repository link in the footer (true/false). | `true` |
+| `SHOW_VERSION` | Display the application version number in the footer. | `true` |
+| `SHOW_GITHUB` | Display the GitHub repository link in the footer. | `true` |
 | `TRUST_PROXY` | Set `true` if backend is hosted behind a reverse proxy. | `false` |
 | `TRUSTED_PROXY_IPS` | Comma-separated IP/CIDR list of trusted upstream proxies. | None |
+
+---
+
+## 🛠️ Local Development
+
+Ensure you have the Rust toolchain and Trunk installed.
+
+```bash
+# 1. Run workspace tests
+cargo test
+
+# 2. Run clippy workspace checks
+cargo clippy --workspace --all-targets
+
+# 3. Start frontend Yew dev server (from frontend/)
+cd frontend && trunk serve
+
+# 4. Start backend Axum server (from backend/)
+cd backend && cargo run
+```
+
+---
+
+## 📄 License
+Licensed under the [Apache License, Version 2.0](LICENSE). Copyright 2026 UberMetroid.
