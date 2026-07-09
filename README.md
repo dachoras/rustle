@@ -7,7 +7,7 @@ Rustle is a clean, secure, and optimized word guessing game (Wordle clone) built
 ## 🏛️ Architecture & Stack
 *   **Frontend**: Yew (WASM)
 *   **Backend**: Axum (Rust) / Tokio
-*   **Deployment**: Nix-built Container / Unraid native / Docker Compose
+*   **Deployment**: UBI container (Red Hat UBI9) on Docker Hub / Unraid / Podman / Docker Compose
 
 ---
 
@@ -21,6 +21,25 @@ Rustle is a clean, secure, and optimized word guessing game (Wordle clone) built
 ---
 
 ## 💾 Deployment & Installation
+
+### Container images (Docker Hub)
+
+Images are **UBI9-minimal** based (Red Hat Universal Base Image). Tags:
+
+| Tag | Meaning |
+| :--- | :--- |
+| `latest` | Current recommended build |
+| `ubi` | Explicit UBI image (same lineage as `latest`) |
+| `0.1.36` | Immutable release pin |
+
+```bash
+# Pull examples
+podman pull docker.io/ubermetroid/rustle:latest
+podman pull docker.io/ubermetroid/rustle:ubi
+podman pull docker.io/ubermetroid/rustle:0.1.36
+```
+
+Hub: [https://hub.docker.com/r/ubermetroid/rustle](https://hub.docker.com/r/ubermetroid/rustle)
 
 ### Docker Compose
 Create a `docker-compose.yml` file with the following service definition:
@@ -42,6 +61,24 @@ services:
       TZ: ${TZ:-UTC}
       ENABLE_TRANSLATION: ${ENABLE_TRANSLATION:-false}
       MAX_ATTEMPTS: ${MAX_ATTEMPTS:-5}
+```
+
+### Build the UBI image locally
+
+Requires [Podman](https://podman.io/) (or Docker) and network access to pull base images and crates.
+
+```bash
+# From the repository root
+podman build --format docker -f Containerfile.ubi \
+  -t docker.io/ubermetroid/rustle:0.1.36 \
+  -t docker.io/ubermetroid/rustle:latest \
+  -t docker.io/ubermetroid/rustle:ubi \
+  .
+
+# Optional: push all three tags
+podman push docker.io/ubermetroid/rustle:0.1.36
+podman push docker.io/ubermetroid/rustle:latest
+podman push docker.io/ubermetroid/rustle:ubi
 ```
 
 ---
