@@ -7,11 +7,5 @@ Word guessing arcade game.
 ### Self-Hosting (Docker)
 Pull and run the official Docker container:
 ```bash
-docker run -d -p 4502:4502 ubermetroid/rustle:latest
-```
-
-### Local Development
-To run locally, ensure you have Rust and Cargo installed:
-```bash
-cargo run --bin server
+docker run -d -p 4502:4502 ghcr.io/dachoras/rustle:latest
 ```
