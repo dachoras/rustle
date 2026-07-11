@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.1.36"
+version = "0.1.39"
 dependencies = [
  "axum",
  "chrono",
@@ -1191,7 +1191,7 @@ dependencies = [
 
 [[package]]
 name = "rustle-frontend"
-version = "0.1.36"
+version = "0.1.39"
 dependencies = [
  "base64",
  "blowfish",
