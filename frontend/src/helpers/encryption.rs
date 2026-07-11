@@ -16,7 +16,7 @@
 // along with Rustle.  If not, see <https://www.gnu.org/licenses/>.
 
 use base64::{engine::general_purpose::STANDARD, Engine as _};
-use blowfish::cipher::{BlockDecrypt, BlockEncrypt, KeyInit};
+use blowfish::cipher::{BlockCipherDecrypt, BlockCipherEncrypt, KeyInit};
 use blowfish::Blowfish;
 
 pub fn encrypt(data: &str) -> Result<String, String> {
@@ -30,7 +30,7 @@ pub fn encrypt(data: &str) -> Result<String, String> {
     bytes.resize(bytes.len() + pad_len, 0);
 
     for chunk in bytes.chunks_mut(8) {
-        let block = blowfish::cipher::generic_array::GenericArray::from_mut_slice(chunk);
+        let block = chunk.try_into().map_err(|_| "invalid block length")?;
         bf.encrypt_block(block);
     }
 
@@ -47,7 +47,7 @@ pub fn decrypt(encoded: &str) -> Option<String> {
     }
 
     for chunk in bytes.chunks_mut(8) {
-        let block = blowfish::cipher::generic_array::GenericArray::from_mut_slice(chunk);
+        let block = chunk.try_into().ok()?;
         bf.decrypt_block(block);
     }
 

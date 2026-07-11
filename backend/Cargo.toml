@@ -1,6 +1,6 @@
 [package]
 name = "backend"
-version = "0.1.41"
+version = "0.1.42"
 edition = "2024"
 authors = ["UberMetroid"]
 license = "GPL-3.0-or-later"
@@ -20,13 +20,13 @@ path = "src/bin/sh.rs"
 [dependencies]
 axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
-tower-http = { version = "0.6", features = ["fs"] }
+tower-http = { version = "0.7", features = ["fs"] }
 dotenvy = "0.15"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1"
-constant_time_eq = "0.3"
-rand = "0.8"
+constant_time_eq = "0.5"
+rand = { version = "0.10", features = ["std", "thread_rng"] }
 shared-core = { git = "https://github.com/UberMetroid/shared-assets.git", tag = "v3.0.19" }
 shared-backend = { git = "https://github.com/UberMetroid/shared-assets.git", tag = "v3.0.19" }

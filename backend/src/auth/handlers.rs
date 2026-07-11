@@ -29,7 +29,7 @@ use axum::{
     Json,
 };
 use constant_time_eq::constant_time_eq;
-use rand::RngCore;
+use rand::Rng;
 use serde_json::json;
 use shared_backend::auth::{attempts, session};
 use shared_backend::server::ip::get_client_ip;
@@ -137,7 +137,7 @@ pub async fn verify_pin(
         // model where the cookie is opaque and the gatekeeping middleware
         // reads it and compares to the PIN via constant-time equality.
         let mut buf = [0u8; 32];
-        rand::rngs::OsRng.fill_bytes(&mut buf);
+        rand::rng().fill_bytes(&mut buf);
         let token = buf.iter().map(|b| format!("{:02x}", b)).collect::<String>();
 
         let mut response = Json(json!({ "success": true })).into_response();
