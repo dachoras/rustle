@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.1.41"
+version = "0.1.48"
 dependencies = [
  "axum",
  "chrono",
@@ -457,7 +457,7 @@ dependencies = [
  "gloo-history",
  "gloo-net 0.5.0",
  "gloo-render",
- "gloo-storage",
+ "gloo-storage 0.3.0",
  "gloo-timers 0.3.0",
  "gloo-utils 0.2.0",
  "gloo-worker",
@@ -598,6 +598,21 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 1.0.69",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "gloo-storage"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e82ce7d41c6d821640a43726f6ff33c924795cc151b62e5a84d0c988c151c980"
+dependencies = [
+ "gloo-utils 0.3.0",
+ "js-sys",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1221,7 +1236,7 @@ dependencies = [
 
 [[package]]
 name = "rustle-frontend"
-version = "0.1.41"
+version = "0.1.48"
 dependencies = [
  "base64",
  "blowfish",
@@ -1231,7 +1246,7 @@ dependencies = [
  "console_log",
  "gloo-events 0.3.0",
  "gloo-net 0.7.0",
- "gloo-storage",
+ "gloo-storage 0.4.0",
  "gloo-timers 0.4.0",
  "gloo-utils 0.3.0",
  "js-sys",
