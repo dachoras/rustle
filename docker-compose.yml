@@ -1,6 +1,6 @@
 services:
   rustle:
-    image: ubermetroid/rustle:latest
+    image: ghcr.io/dachoras/rustle:latest
     build: .
     container_name: rustle
     restart: unless-stopped
