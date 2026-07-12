@@ -59,7 +59,7 @@ RUN trunk build --release
 
 WORKDIR /src
 RUN cargo build --release -p backend \
- && strip target/release/backend || true
+ && strip target/release/server || true
 
 # ---------- runtime: Red Hat UBI Minimal ----------
 FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
@@ -77,7 +77,7 @@ RUN microdnf install -y ca-certificates wget shadow-utils \
  && mkdir -p /app/data /app/frontend/dist \
  && chown -R 99:100 /app
 
-COPY --from=builder /src/target/release/backend /app/backend
+COPY --from=builder /src/target/release/server /app/server
 COPY --from=builder /src/frontend/dist /app/frontend/dist
 
 WORKDIR /app
@@ -91,4 +91,4 @@ EXPOSE 4502
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- "http://127.0.0.1:${PORT:-4502}/health" >/dev/null || exit 1
 
-CMD ["/app/backend"]
+CMD ["/app/server"]
