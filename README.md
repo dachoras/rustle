@@ -1,5 +1,7 @@
 # <img src="assets/icon.png" width="32" height="32" valign="middle"> Rustle
 
+[![CI](https://github.com/dachoras/rustle/actions/workflows/ci.yml/badge.svg)](https://github.com/dachoras/rustle/actions/workflows/ci.yml)
+
 Word guessing arcade game.
 
 ## Quick Start
