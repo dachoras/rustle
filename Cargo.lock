@@ -116,7 +116,7 @@ dependencies = [
 
 [[package]]
 name = "backend"
-version = "0.1.41"
+version = "0.1.51"
 dependencies = [
  "axum",
  "chrono",
@@ -134,9 +134,9 @@ dependencies = [
 
 [[package]]
 name = "base64"
-version = "0.21.7"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d297deb1925b89f2ccc13d7635fa0714f12c87adce1c75356b39ca9b7178567"
+checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
 name = "bincode"
@@ -457,7 +457,7 @@ dependencies = [
  "gloo-history",
  "gloo-net 0.5.0",
  "gloo-render",
- "gloo-storage",
+ "gloo-storage 0.3.0",
  "gloo-timers 0.3.0",
  "gloo-utils 0.2.0",
  "gloo-worker",
@@ -598,6 +598,21 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 1.0.69",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
+name = "gloo-storage"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e82ce7d41c6d821640a43726f6ff33c924795cc151b62e5a84d0c988c151c980"
+dependencies = [
+ "gloo-utils 0.3.0",
+ "js-sys",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
  "wasm-bindgen",
  "web-sys",
 ]
@@ -1221,7 +1236,7 @@ dependencies = [
 
 [[package]]
 name = "rustle-frontend"
-version = "0.1.41"
+version = "0.1.51"
 dependencies = [
  "base64",
  "blowfish",
@@ -1231,7 +1246,7 @@ dependencies = [
  "console_log",
  "gloo-events 0.3.0",
  "gloo-net 0.7.0",
- "gloo-storage",
+ "gloo-storage 0.4.0",
  "gloo-timers 0.4.0",
  "gloo-utils 0.3.0",
  "js-sys",
@@ -1352,8 +1367,8 @@ dependencies = [
 
 [[package]]
 name = "shared-backend"
-version = "3.0.19"
-source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.19#2c5b0659ef7bcda53bec6d9c856c57dea9d06ee9"
+version = "3.0.29"
+source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.29#cad2021cf1809e6ac00dce80beab5f241272fc69"
 dependencies = [
  "anyhow",
  "axum",
@@ -1373,8 +1388,8 @@ dependencies = [
 
 [[package]]
 name = "shared-core"
-version = "3.0.19"
-source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.19#2c5b0659ef7bcda53bec6d9c856c57dea9d06ee9"
+version = "3.0.29"
+source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.29#cad2021cf1809e6ac00dce80beab5f241272fc69"
 dependencies = [
  "constant_time_eq 0.3.1",
  "serde",
@@ -1382,8 +1397,8 @@ dependencies = [
 
 [[package]]
 name = "shared-frontend"
-version = "3.0.19"
-source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.19#2c5b0659ef7bcda53bec6d9c856c57dea9d06ee9"
+version = "3.0.29"
+source = "git+https://github.com/UberMetroid/shared-assets.git?tag=v3.0.29#cad2021cf1809e6ac00dce80beab5f241272fc69"
 dependencies = [
  "js-sys",
  "serde",
