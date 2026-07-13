@@ -118,11 +118,11 @@ pub fn build_asset_manifest() -> Vec<String> {
     if !files.contains(&"/favicon.png".to_string()) {
         files.push("/favicon.png".to_string());
     }
-    if !files.contains(&"/public/favicon.png".to_string()) {
-        files.push("/public/favicon.png".to_string());
+    if !files.contains(&"/assets/favicon.png".to_string()) {
+        files.push("/assets/favicon.png".to_string());
     }
-    if !files.contains(&"/public/manifest.json".to_string()) {
-        files.push("/public/manifest.json".to_string());
+    if !files.contains(&"/assets/manifest.json".to_string()) {
+        files.push("/assets/manifest.json".to_string());
     }
     files
 }

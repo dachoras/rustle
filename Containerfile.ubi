@@ -50,6 +50,7 @@ RUN mkdir -p backend/src frontend/src \
 RUN cargo fetch
 
 # Real sources (includes frontend/Assets/shared-assets styles for trunk)
+COPY assets assets
 COPY backend backend
 COPY frontend frontend
 

@@ -154,7 +154,7 @@ pub async fn serve_index(
 }
 
 pub async fn serve_service_worker() -> impl IntoResponse {
-    serve_static_file("dist/public/service-worker.js", "application/javascript").await
+    serve_static_file("dist/assets/service-worker.js", "application/javascript").await
 }
 
 pub async fn serve_asset_manifest() -> impl IntoResponse {
