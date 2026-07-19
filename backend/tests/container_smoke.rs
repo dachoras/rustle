@@ -9,7 +9,6 @@ use reqwest::Client;
 use serde_json::Value;
 use std::time::Duration;
 
-const APP_NAME: &str = "rustle";
 const DEFAULT_PORT: u16 = 4502;
 
 const FAVICON_CANDIDATES: &[&str] = &["/assets/favicon.png", "/favicon.png"];
@@ -18,12 +17,6 @@ const MANIFEST_CANDIDATES: &[&str] = &[
     "/asset-manifest.json",
     "/assets/manifest.json",
     "/manifest.json",
-];
-const CONFIG_CANDIDATES: &[&str] = &[
-    "/api/auth-check",
-    "/api/auth/config",
-    "/api/config",
-    "/config",
 ];
 const SERVICE_WORKER_CANDIDATES: &[&str] = &[
     "/api/service-worker.js",

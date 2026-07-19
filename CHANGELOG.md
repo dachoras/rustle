@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-07-19
+
+### Fixed
+- **Favicon cache-bust query** updated version string from `?v=0.1.52` to `?v=1.0.1` in `frontend/index.html` to align with the release version.
+- **Backend Tests** removed unused constants `APP_NAME` and `CONFIG_CANDIDATES` in `backend/tests/container_smoke.rs` to clean up compiler warnings.
+
+## [1.0.0] - 2026-07-19
+
+### Changed
+- **Rebrand and Align**: Restructured Docker configuration (`Containerfile.ubi`) and GitHub Actions to support Unraid compatibility (runs as UID 99:GID 100, data-dir symlinked to `/config`, listens on all interfaces) across all studio2201 apps.
+- **Top-level assets**: Added `LICENSE` and `CONTRIBUTING.md` files.
+
 ## [0.1.52] - 2026-07-19
 
 ### Changed
