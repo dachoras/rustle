@@ -30,3 +30,5 @@ constant_time_eq = "0.5"
 rand = { version = "0.10", features = ["std", "thread_rng"] }
 shared-core = { git = "https://github.com/UberMetroid/shared-assets.git", tag = "v3.0.29" }
 shared-backend = { git = "https://github.com/UberMetroid/shared-assets.git", tag = "v3.0.29" }
+[dev-dependencies]
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "cookies"] }
