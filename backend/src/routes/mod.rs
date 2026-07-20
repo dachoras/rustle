@@ -37,7 +37,7 @@ pub async fn serve_index(
 ) -> impl IntoResponse {
     // If PIN is configured and user is NOT authenticated, serve the login page
     if let Some(pin) = state.config.pin.as_deref() {
-        if !is_authorized(&headers, pin) {
+        if !is_authorized(&headers, &state, pin) {
             let login_rendered = LOGIN_HTML.replace("{SITE_TITLE}", state.site_title());
             return Html(login_rendered).into_response();
         }

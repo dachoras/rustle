@@ -140,6 +140,8 @@ pub async fn verify_pin(
         rand::rng().fill_bytes(&mut buf);
         let token = buf.iter().map(|b| format!("{:02x}", b)).collect::<String>();
 
+        state.register_session(token.clone());
+
         let mut response = Json(json!({ "success": true })).into_response();
         session::issue_cookie(config, &token, &mut response);
         response
@@ -180,7 +182,7 @@ pub async fn verify_pin(
 /// 401 otherwise.
 pub async fn auth_check(headers: HeaderMap, State(state): State<AppState>) -> impl IntoResponse {
     if let Some(pin) = state.config.pin.as_deref()
-        && !is_authorized(&headers, pin)
+        && !is_authorized(&headers, &state, pin)
     {
         return StatusCode::UNAUTHORIZED.into_response();
     }
@@ -188,11 +190,29 @@ pub async fn auth_check(headers: HeaderMap, State(state): State<AppState>) -> im
 }
 
 /// Clears the `pin` cookie (logout).
-pub async fn logout() -> impl IntoResponse {
-    let mut headers = HeaderMap::new();
-    headers.insert(
+pub async fn logout(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+) -> impl IntoResponse {
+    let cookie_token = headers
+        .get(header::COOKIE)
+        .and_then(|c| c.to_str().ok())
+        .and_then(|c_str| {
+            c_str
+                .split(';')
+                .find(|s| s.trim().starts_with("pin="))
+                .and_then(|s| s.split('=').nth(1))
+                .map(|s| s.trim().to_string())
+        });
+
+    if let Some(token) = cookie_token {
+        state.unregister_session(&token);
+    }
+
+    let mut response_headers = HeaderMap::new();
+    response_headers.insert(
         header::SET_COOKIE,
         HeaderValue::from_static("pin=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"),
     );
-    (StatusCode::OK, headers, Json(json!({ "success": true }))).into_response()
+    (StatusCode::OK, response_headers, Json(json!({ "success": true }))).into_response()
 }

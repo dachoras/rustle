@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.20] - 2026-07-19
+
+### Fixed
+- **Authentication Bug**: Added an in-memory session database to register and validate random session tokens, fixing a critical bug where users were immediately logged out upon loading protected resources.
+- **Lockout Safety**: Separated token cookie checks from low-entropy header brute-force tracking to prevent legitimate users with expired cookies from triggering IP lockouts.
+
 ## [1.0.19] - 2026-07-19
 
 ### Changed

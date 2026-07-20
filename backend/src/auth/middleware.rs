@@ -56,17 +56,6 @@ fn is_auth_api_bypass(path: &str) -> bool {
         || path == "/api/logout"
 }
 
-fn extract_pin(headers: &axum::http::HeaderMap, request: &Request) -> Option<String> {
-    if let Some(p) = headers
-        .get("x-pin")
-        .and_then(|h| h.to_str().ok())
-        .filter(|s| !s.is_empty())
-    {
-        return Some(p.to_string());
-    }
-    shared_backend::auth::read_pin_cookie(request)
-}
-
 fn unauthorized_response() -> Response {
     (StatusCode::UNAUTHORIZED, "unauthorized").into_response()
 }
@@ -113,24 +102,36 @@ pub async fn auth_middleware(
         return too_many_requests_response();
     }
 
-    match extract_pin(request.headers(), &request) {
-        Some(p) if constant_time_eq(expected_pin.as_bytes(), p.as_bytes()) => {
-            attempts::reset_attempts(&ip);
-            next.run(request).await
+    let mut is_auth = false;
+    let mut is_pin_attempt = false;
+
+    if let Some(header_pin) = request.headers().get("x-pin").and_then(|h| h.to_str().ok()) {
+        is_pin_attempt = true;
+        if constant_time_eq(header_pin.as_bytes(), expected_pin.as_bytes()) {
+            is_auth = true;
         }
-        Some(_) => {
+    } else if let Some(cookie_token) = shared_backend::auth::read_pin_cookie(&request) {
+        if state.session_is_valid(&cookie_token) {
+            is_auth = true;
+        }
+    }
+
+    if is_auth {
+        attempts::reset_attempts(&ip);
+        next.run(request).await
+    } else {
+        if is_pin_attempt {
             let attempt = attempts::record_attempt(&ip);
             tracing::warn!(
                 target: "auth",
-                "failed PIN attempt #{count} from {ip}",
+                "failed PIN attempt #{count} from {ip} via X-PIN header",
                 count = attempt.count
             );
             if attempt.count >= state.config.max_attempts {
                 tracing::warn!(target: "auth", "IP {ip} locked out");
             }
-            unauthorized_response()
         }
-        None => unauthorized_response(),
+        unauthorized_response()
     }
 }
 

@@ -36,18 +36,51 @@ use axum::http::{header, HeaderMap};
 use serde::Deserialize;
 use shared_backend::auth::PinState;
 use shared_backend::server::ServerConfig;
+use std::collections::HashMap;
 use std::sync::Arc;
+use std::sync::RwLock;
+use std::time::Instant;
 
 #[derive(Clone)]
 pub struct AppState {
     pub config: Arc<ServerConfig>,
     pub pin_state: PinState,
+    pub active_sessions: Arc<RwLock<HashMap<String, Instant>>>,
 }
 
 impl AppState {
     pub fn new(config: Arc<ServerConfig>) -> Self {
         let pin_state = PinState::from(Arc::clone(&config));
-        Self { config, pin_state }
+        Self {
+            config,
+            pin_state,
+            active_sessions: Arc::new(RwLock::new(HashMap::new())),
+        }
+    }
+
+    pub fn register_session(&self, token: String) {
+        let max_age_secs = (self.config.cookie_max_age_hours * 3600) as u64;
+        if let Ok(mut sessions) = self.active_sessions.write() {
+            // Proactively clean up expired sessions on write to prevent memory leaks
+            sessions.retain(|_, created_at| created_at.elapsed().as_secs() < max_age_secs);
+            sessions.insert(token, Instant::now());
+        }
+    }
+
+    pub fn session_is_valid(&self, token: &str) -> bool {
+        let max_age_secs = (self.config.cookie_max_age_hours * 3600) as u64;
+        if let Ok(sessions) = self.active_sessions.read() {
+            if let Some(&created_at) = sessions.get(token) {
+                return created_at.elapsed().as_secs() < max_age_secs;
+            }
+        }
+        false
+    }
+
+    pub fn unregister_session(&self, token: &str) {
+        if let Ok(mut sessions) = self.active_sessions.write() {
+            sessions.remove(token);
+        }
     }
 
     pub fn pin(&self) -> Option<&str> {
@@ -90,7 +123,7 @@ pub const LOGIN_HTML: &str = include_str!("../login.html");
 /// Used by routes that gate content based on auth status without going
 /// through the auth middleware (e.g. `serve_index` returning login HTML
 /// for unauthenticated users when PIN is enabled).
-pub fn is_authorized(headers: &HeaderMap, pin: &str) -> bool {
+pub fn is_authorized(headers: &HeaderMap, state: &AppState, pin: &str) -> bool {
     use constant_time_eq::constant_time_eq;
 
     let cookie_pin = headers
@@ -109,7 +142,7 @@ pub fn is_authorized(headers: &HeaderMap, pin: &str) -> bool {
         .map(|s| s.to_string());
 
     match (cookie_pin, header_pin) {
-        (Some(cookie), _) => constant_time_eq(cookie.as_bytes(), pin.as_bytes()),
+        (Some(cookie), _) => state.session_is_valid(&cookie),
         (None, Some(hdr)) => constant_time_eq(hdr.as_bytes(), pin.as_bytes()),
         (None, None) => false,
     }
