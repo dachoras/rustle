@@ -12,8 +12,8 @@
   <Overview>High-performance self-hosted word puzzle gameplay engine and web app built in Rust.</Overview>
   <Category>Game:Puzzle Network:Web</Category>
   <WebUI>http://[IP]:[PORT:4502]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/studio2201/unraid-templates/main/templates/rustle.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/studio2201/unraid-templates/main/icons/rustle.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/studio2201/unraid-templates/master/templates/rustle.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/studio2201/unraid-templates/master/icons/rustle.png</Icon>
   <ExtraParams/>
   <PostArgs/>
   <CPUset/>
