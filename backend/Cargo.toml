@@ -28,6 +28,9 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1"
+axum-extra = { version = "0.12", features = ["cookie"] }
+time = { version = "0.3", default-features = false, features = ["std"] }
+sha2 = "0.10"
 constant_time_eq = "0.5"
 rand = { version = "0.10", features = ["std", "thread_rng"] }
 shared-core = { git = "https://github.com/studio2201/shared-assets.git", tag = "v3.0.39" }
