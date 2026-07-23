@@ -1,5 +1,3 @@
-mod cookie_auth;
-mod session_id;
 // Copyright (C) 2026 UberMetroid
 //
 // This file is part of Rustle.
@@ -38,6 +36,9 @@ use auth::{
 use routes::{serve_asset_manifest, serve_index, serve_service_worker};
 
 #[tokio::main]
+mod cookie_auth;
+mod session_id;
+
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Bootstrap tracing — shared helper reads `LOG_DIR` env var and
     // configures file + stdout logging.
