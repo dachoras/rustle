@@ -35,7 +35,7 @@ pub use middleware::{auth_middleware, security_headers_middleware};
 use axum::http::{HeaderMap, header};
 use serde::Deserialize;
 use shared_backend::auth::PinState;
-use shared_backend::server::ServerConfig;
+use crate::config::AppConfig;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::RwLock;

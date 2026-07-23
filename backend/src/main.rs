@@ -23,8 +23,8 @@ use axum::{
     Router, middleware,
     routing::{get, post},
 };
-use shared_backend::middleware::cors_layer;
-use shared_backend::server::ServerConfig;
+use crate::middleware::cors_layer;
+use crate::config::AppConfig;
 use shared_backend::tracing_init::{default_log_dir, init_tracing};
 use std::sync::Arc;
 use tower_http::services::{ServeDir, ServeFile};
@@ -36,6 +36,7 @@ use auth::{
 use routes::{serve_asset_manifest, serve_index, serve_service_worker};
 
 mod cookie_auth;
+mod ip;
 mod session_id;
 
 #[tokio::main]
