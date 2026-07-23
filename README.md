@@ -20,26 +20,6 @@ Open your browser to `http://localhost:4503` to start guessing the daily word.
 
 ---
 
-### One-Line Install (Native Package Manager)
-
-On Debian, Ubuntu, Fedora, or RHEL:
-
-```bash
-curl -fsSL https://studio2201.github.io/packages/install.sh | sudo bash
-```
-
----
-
-### Unraid NAS Deployment
-
-Deploy via the official Unraid Template:
-
-1. Copy [`rustle.xml`](rustle.xml) to your Unraid flash drive under `/boot/config/plugins/dockerMan/templates-user/`.
-2. Open **Docker** -> **Add Container** -> Select **rustle** from the template dropdown.
-3. Click **Apply**.
-
----
-
 ### Environment Configuration
 
 The backend service can be customized using the following environment variables:
