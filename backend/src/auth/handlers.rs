@@ -29,7 +29,6 @@ use axum::{
     response::IntoResponse,
 };
 use constant_time_eq::constant_time_eq;
-use rand::Rng;
 use serde_json::json;
 use shared_backend::auth::{attempts, session};
 use shared_backend::server::ip::get_client_ip;
@@ -119,14 +118,8 @@ pub async fn verify_pin(
     if constant_time_eq(pin_str.as_bytes(), config_pin.as_bytes()) {
         attempts::reset_attempts(&ip);
 
-        // Issue a session cookie: a random opaque token, NOT the PIN itself.
-        // The previous (hand-rolled) implementation hashed the PIN and set
-        // it as the cookie value; the shared backend uses a random token
-        // model where the cookie is opaque and the gatekeeping middleware
-        // reads it and compares to the PIN via constant-time equality.
-        let mut buf = [0u8; 32];
-        rand::rng().fill_bytes(&mut buf);
-        let token = buf.iter().map(|b| format!("{:02x}", b)).collect::<String>();
+        // Issue a session cookie: a random opaque token from the shared CSPRNG.
+        let token = shared_backend::session_id::generate_session_id();
 
         state.register_session(token.clone());
 
