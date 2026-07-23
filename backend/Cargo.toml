@@ -1,4 +1,4 @@
-getrandom = { version = "0.2" }
+
 [package]
 name = "backend"
 version = "1.0.27"
@@ -19,6 +19,7 @@ name = "sh"
 path = "src/bin/sh/main.rs"
 
 [dependencies]
+getrandom = { version = "0.2" }
 axum = { version = "0.8", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
 tower-http = { version = "0.7", features = ["fs"] }
